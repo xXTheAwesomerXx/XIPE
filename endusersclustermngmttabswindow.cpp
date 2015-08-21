@@ -19,6 +19,7 @@
 #include <QMenu>
 #include <QMenuBar>
 #include <QAction>
+#include <QDir>
 using namespace Variables;
 QVector<QListWidget*> myList;
 QVector<QListWidget*> myList2;
@@ -50,6 +51,36 @@ EndusersClusterMngmtTabsWindow::EndusersClusterMngmtTabsWindow(QWidget *parent) 
 EndusersClusterMngmtTabsWindow::~EndusersClusterMngmtTabsWindow()
 {
     delete ui;
+}
+
+void EndusersClusterMngmtTabsWindow::appendToFile(QString text, QString filePath, QString fileName) {
+    QFile logFile(filePath + "/" + fileName);
+    QDir logDir;
+    if (logDir.exists(filePath)) {
+        qDebug() << "path exists";
+        if (logFile.open(QIODevice::Append)) {
+            qDebug() << "file opened!";
+            QTextStream in(&logFile);
+                   in << text << endl;
+                   in << "-------------------------------------------------" << endl;
+                   logFile.close();
+        } else {
+            qDebug() << "Failed to open file........";
+        }
+    } else {
+        if (logDir.mkpath(filePath)) {
+            qDebug() << "We made the path";
+            if (logFile.open(QIODevice::Append)) {
+                qDebug() << "file opened!";
+                QTextStream in(&logFile);
+                    in << text << endl;
+                    in << "-------------------------------------------------" << endl;
+                       logFile.close();
+            } else {
+                qDebug() << "Failed to open file........";
+            }
+        }
+    }
 }
 
 QString EndusersClusterMngmtTabsWindow::getSubstringBetween(QString src, QString start, QString stop) {
@@ -119,6 +150,8 @@ void EndusersClusterMngmtTabsWindow::findUsers(QString hostname, QString usernam
     jsonString += "<soapenv:Body><ns:executeSQLQuery><sql>SELECT enduser.userid,enduser.firstname,enduser.middlename,enduser.lastname,enduser.islocaluser,enduser.telephonenumber from enduser where lower("
             + condition1String + ") " + condition2String + "</sql></ns:executeSQLQuery></SOAP-ENV:Envelope>";
     }
+    QString jsonLogString(getSubstringBetween(jsonString, "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ns=\"http://www.cisco.com/AXL/API/8.5\"><soapenv:Body><ns:executeSQLQuery><sql>", "</sql></ns:executeSQLQuery></SOAP-ENV:Envelope>"));
+    appendToFile("Execute Query: " + jsonLogString.toLocal8Bit(), QDir::homePath() + "/XIPE/ClusterMngmt/logs", "log_" + Variables::logTime + ".txt");
     QByteArray postDataSize = QByteArray::number(jsonString.size());
     QUrl req("https://" + hostname.toLocal8Bit() + ":8443/axl/");
     QNetworkRequest request(req);
@@ -146,6 +179,7 @@ void EndusersClusterMngmtTabsWindow::findUsers(QString hostname, QString usernam
 
     if ( status != 200 ) {
         QString reason = reply->attribute( QNetworkRequest::HttpReasonPhraseAttribute ).toString();
+        appendToFile("Failed to connect to " + hostname.toLocal8Bit() + " for find users query!", QDir::homePath() + "/XIPE/ClusterMngmt/logs", "log_" + Variables::logTime + ".txt");
     } else {
         //qDebug() << response;
         QDomDocument doc;
@@ -183,6 +217,8 @@ void EndusersClusterMngmtTabsWindow::findUsers(QString hostname, QString usernam
             }
             QString* messageStringToAdd = new QString("Query returned " + QString::number(rates.size()) + " results, " + QString::number(list2->count()) + " Endusers reside in this cluster and " + QString::number(list->count()) + " Endusers do not!");
             messageString[itemIndex] = messageStringToAdd;
+            QString logString(messageStringToAdd->toLocal8Bit());
+            appendToFile(logString, QDir::homePath() + "/XIPE/ClusterMngmt/logs", "log_" + Variables::logTime + ".txt");
     }
 }
 
@@ -225,14 +261,17 @@ void EndusersClusterMngmtTabsWindow::addUsersToCluster(QString hostname, QString
 
         if ( status != 200 ) {
             QString reason = reply->attribute( QNetworkRequest::HttpReasonPhraseAttribute ).toString();
+            appendToFile("Failed to connect to " + hostname.toLocal8Bit() + " for add user update on userid: " + userid.toLocal8Bit(), QDir::homePath() + "/XIPE/ClusterMngmt/logs", "log_" + Variables::logTime + ".txt");
         } else {
             if (response.contains("<rowsUpdated>1</rowsUpdated>")) {
                 delete userToRemove;
                 list2->addItem(userToAdd);
                 userToAdd->setBackground(QColor(0, 170, 255));//Correct the color scheme
                 goodAdditions++;
+                appendToFile("Successfully added userid " + userid.toLocal8Bit() + " to cluster " + hostname.toLocal8Bit(), QDir::homePath() + "/XIPE/ClusterMngmt/logs", "log_" + Variables::logTime + ".txt");
             } else {
                 badAdditions++;
+                appendToFile("Failed to add user id " + userid.toLocal8Bit() + " to cluster " + hostname.toLocal8Bit(), QDir::homePath() + "/XIPE/ClusterMngmt/logs", "log_" + Variables::logTime + ".txt");
             }
         }
         }
@@ -279,14 +318,17 @@ void EndusersClusterMngmtTabsWindow::removeUsersfromCluster(QString hostname, QS
 
         if ( status != 200 ) {
             QString reason = reply->attribute( QNetworkRequest::HttpReasonPhraseAttribute ).toString();
+           appendToFile("Failed to connect to " + hostname.toLocal8Bit() + " for add user update on userid: " + userid.toLocal8Bit(), QDir::homePath() + "/XIPE/ClusterMngmt/logs", "log_" + Variables::logTime + ".txt");
         } else {
             if (response.contains("<rowsUpdated>1</rowsUpdated>")) {
                 delete userToRemove;
                 list2->addItem(userToAdd);
                 userToAdd->setBackground(QColor(170, 0, 0));//Correct the color scheme
                 goodAdditions++;
+                appendToFile("Successfully removed userid " + userid.toLocal8Bit() + " from cluster " + hostname.toLocal8Bit(), QDir::homePath() + "/XIPE/ClusterMngmt/logs", "log_" + Variables::logTime + ".txt");
             } else {
                 badAdditions++;
+                appendToFile("Failed to remove userid " + userid.toLocal8Bit() + " from cluster " + hostname.toLocal8Bit(), QDir::homePath() + "/XIPE/ClusterMngmt/logs", "log_" + Variables::logTime + ".txt");
             }
         }
     }
@@ -373,3 +415,8 @@ void EndusersClusterMngmtTabsWindow::on_tabWidgetClusters_currentChanged(int ind
 }
 
 
+
+void EndusersClusterMngmtTabsWindow::on_lineEditQueryData_returnPressed()
+{
+    on_btnFindUsers_clicked();
+}

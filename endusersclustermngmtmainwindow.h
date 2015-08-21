@@ -30,6 +30,16 @@ private slots:
 
     void on_pushButtonTestConnections_clicked();
 
+    void on_lineEditClustername_returnPressed();
+
+    void on_lineEditHostname_returnPressed();
+
+    void on_lineEditUsername_returnPressed();
+
+    void on_lineEditPassword_returnPressed();
+
+    void on_listWidget_customContextMenuRequested(const QPoint &pos);
+
 private:
     Ui::EndusersClusterMngmtMainWindow *ui;
 };

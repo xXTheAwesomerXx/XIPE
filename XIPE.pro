@@ -23,7 +23,8 @@ SOURCES += main.cpp\
     findusersmngmt.cpp \
     endusersclustermngmtmainwindow.cpp \
     endusersclustermngmttabswindow.cpp \
-    uccxmigrationmainwindow.cpp
+    uccxmigrationmainwindow.cpp \
+    clustermngmtcustomlist.cpp
 
 HEADERS  += mainwindow.h \
     clustertab.h \
@@ -32,7 +33,8 @@ HEADERS  += mainwindow.h \
     findusersmngmt.h \
     endusersclustermngmtmainwindow.h \
     endusersclustermngmttabswindow.h \
-    uccxmigrationmainwindow.h
+    uccxmigrationmainwindow.h \
+    clustermngmtcustomlist.h
 
 FORMS    += mainwindow.ui \
     clustertab.ui \

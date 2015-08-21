@@ -2,6 +2,7 @@
 #include "variables.h"
 #include <QList>
 #include <QListWidget>
+#include <QDateTime>
 namespace Variables
 {
    QVector<QString> clusterNames;
@@ -11,5 +12,6 @@ namespace Variables
    QVector<QString> hostNamesF;
    QVector<QString> usernamePasswordsF;
    QString uccxHostIP, uccxHostUsernamePwd, uccxClientIP, uccxClientUsernamePwd;
+   QString logTime = QString::number(QDateTime::currentMSecsSinceEpoch());
 }
 

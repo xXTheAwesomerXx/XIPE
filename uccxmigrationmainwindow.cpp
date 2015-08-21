@@ -23,11 +23,61 @@ UCCXMigrationMainWindow::UCCXMigrationMainWindow(QWidget *parent) :
     ui(new Ui::UCCXMigrationMainWindow)
 {
     ui->setupUi(this);
+    QDir appDir;
+    appendToFile("Started UCCX Migration Utility", QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/logs", "log.txt");
+    if (appDir.mkpath(QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/Skills")) {
+            qDebug() << "We made the path";
+    }
+    if (appDir.mkpath(QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/Resource\ Groups")) {
+            qDebug() << "We made the path";
+    }
+    if (appDir.mkpath(QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/Applications")) {
+            qDebug() << "We made the path";
+    }
+    if (appDir.mkpath(QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/CSQs")) {
+            qDebug() << "We made the path";
+    }
+    if (appDir.mkpath(QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/Teams")) {
+            qDebug() << "We made the path";
+    }
+    if (appDir.mkpath(QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/Triggers")) {
+            qDebug() << "We made the path";
+    }
 }
 
 UCCXMigrationMainWindow::~UCCXMigrationMainWindow()
 {
     delete ui;
+}
+
+void UCCXMigrationMainWindow::appendToFile(QString text, QString filePath, QString fileName) {
+    QFile logFile(filePath + "/" + fileName);
+    QDir logDir;
+    if (logDir.exists(filePath)) {
+        qDebug() << "path exists";
+        if (logFile.open(QIODevice::Append)) {
+            qDebug() << "file opened!";
+            QTextStream in(&logFile);
+                   in << text << endl;
+                   in << "-------------------------------------------------" << endl;
+                   logFile.close();
+        } else {
+            qDebug() << "Failed to open file........";
+        }
+    } else {
+        if (logDir.mkpath(filePath)) {
+            qDebug() << "We made the path";
+            if (logFile.open(QIODevice::Append)) {
+                qDebug() << "file opened!";
+                QTextStream in(&logFile);
+                    in << text << endl;
+                    in << "-------------------------------------------------" << endl;
+                       logFile.close();
+            } else {
+                qDebug() << "Failed to open file........";
+            }
+        }
+    }
 }
 
 bool UCCXMigrationMainWindow::testConnection(QString hostname, QString usernamepassword, QStatusBar * statusbar) {
@@ -46,6 +96,7 @@ bool UCCXMigrationMainWindow::testConnection(QString hostname, QString usernamep
     loop.exec();
 
     QByteArray response = reply->readAll();
+    qDebug() << response;
     QVariant statusCode = reply->attribute( QNetworkRequest::HttpStatusCodeAttribute );
     //progbar.close();//Why does this close, entire application window?
     if ( !statusCode.isValid() ) {
@@ -80,7 +131,6 @@ void UCCXMigrationMainWindow::onError(QNetworkReply::NetworkError rep) {
 
 void UCCXMigrationMainWindow::on_pushButtonTestHost_clicked()
 {
-    ui->pushButtonTestClient->setEnabled(false);
     ui->pushButtonTestHost->setEnabled(false);
     if (testConnection(ui->lineEditHostIP->text(), base64_encode(ui->lineEditHostUsername->text() + QString::fromStdString(":") + ui->lineEditHostPassword->text()), ui->statusbar)) {
         ui->lineEditHostIP->setEnabled(false);
@@ -88,22 +138,21 @@ void UCCXMigrationMainWindow::on_pushButtonTestHost_clicked()
         ui->lineEditHostUsername->setEnabled(false);
         Variables::uccxHostIP = ui->lineEditHostIP->text();
         Variables::uccxHostUsernamePwd = base64_encode(ui->lineEditHostUsername->text() + QString::fromStdString(":") + ui->lineEditHostPassword->text());
+    } else {
+        ui->pushButtonTestHost->setEnabled(true);
     }
-    ui->pushButtonTestClient->setEnabled(true);
-    ui->pushButtonTestHost->setEnabled(true);
 }
 
 void UCCXMigrationMainWindow::on_pushButtonTestClient_clicked()
 {
     ui->pushButtonTestClient->setEnabled(false);
-    ui->pushButtonTestHost->setEnabled(false);
     if (testConnection(ui->lineEditClientIP->text(), base64_encode(ui->lineEditClientUsername->text() + QString::fromStdString(":") + ui->lineEditClientPassword->text()), ui->statusbar)) {
         ui->lineEditClientIP->setEnabled(false);
         ui->lineEditClientPassword->setEnabled(false);
         ui->lineEditClientUsername->setEnabled(false);
         Variables::uccxClientIP = ui->lineEditClientIP->text();
         Variables::uccxClientUsernamePwd = base64_encode(ui->lineEditClientUsername->text() + QString::fromStdString(":") + ui->lineEditClientPassword->text());
+    } else {
+        ui->pushButtonTestClient->setEnabled(true);
     }
-    ui->pushButtonTestClient->setEnabled(true);
-    ui->pushButtonTestHost->setEnabled(true);
 }

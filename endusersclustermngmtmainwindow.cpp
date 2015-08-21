@@ -17,19 +17,21 @@
 #include <QDomDocument>
 #include <QMessageBox>
 #include "variables.h"
-#include "progressdialog.h"
 using namespace Variables;
 QString base64_encode(QString string);
 QString base64_decode(QString string);
+void appendToFile(QString text, QString filePath, QString fileName);
 EndusersClusterMngmtMainWindow::EndusersClusterMngmtMainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::EndusersClusterMngmtMainWindow)
 {
     ui->setupUi(this);
     ui->listWidget->setSelectionMode(QAbstractItemView::MultiSelection);
-    QFile inputFile(QDir::homePath() + "/XIPE/ClusterMngmt/test.txt");
+    QFile inputFile(QDir::homePath() + "/XIPE/Cluster\ Mngmt/test.txt");
+    qDebug() << Variables::logTime;
     QDir appDir;
-    if (appDir.exists(QDir::homePath() + "/XIPE/ClusterMngmt")) {
+    appendToFile("Started Enduser Management Utility", QDir::homePath() + "/XIPE/Cluster\ Mngmt/logs", "log_" + Variables::logTime + ".txt");
+    if (appDir.exists(QDir::homePath() + "/XIPE/Cluster\ Mngmt")) {
         qDebug() << "Path is here";
         if (inputFile.open(QIODevice::ReadWrite)) {
             QTextStream in(&inputFile);
@@ -59,7 +61,7 @@ EndusersClusterMngmtMainWindow::EndusersClusterMngmtMainWindow(QWidget *parent) 
                    inputFile.close();
         }
     } else {
-        if (appDir.mkpath(QDir::homePath() + "/XIPE/ClusterMngmt")) {
+        if (appDir.mkpath(QDir::homePath() + "/XIPE/Cluster\ Mngmt")) {
             qDebug() << "We made the path";
             if (inputFile.open(QIODevice::ReadWrite)) {
                 QTextStream in(&inputFile);
@@ -69,6 +71,36 @@ EndusersClusterMngmtMainWindow::EndusersClusterMngmtMainWindow(QWidget *parent) 
                           qDebug() << line;
                        }
                        inputFile.close();
+            }
+        }
+    }
+}
+
+void appendToFile(QString text, QString filePath, QString fileName) {
+    QFile logFile(filePath + "/" + fileName);
+    QDir logDir;
+    if (logDir.exists(filePath)) {
+        qDebug() << "path exists";
+        if (logFile.open(QIODevice::Append)) {
+            qDebug() << "file opened!";
+            QTextStream in(&logFile);
+                   in << text << endl;
+                   in << "-------------------------------------------------" << endl;
+                   logFile.close();
+        } else {
+            qDebug() << "Failed to open file........";
+        }
+    } else {
+        if (logDir.mkpath(filePath)) {
+            qDebug() << "We made the path";
+            if (logFile.open(QIODevice::Append)) {
+                qDebug() << "file opened!";
+                QTextStream in(&logFile);
+                    in << text << endl;
+                    in << "-------------------------------------------------" << endl;
+                       logFile.close();
+            } else {
+                qDebug() << "Failed to open file........";
             }
         }
     }
@@ -102,6 +134,7 @@ void EndusersClusterMngmtMainWindow::on_pushButtonProceedToMngmt_clicked()
 bool EndusersClusterMngmtMainWindow::addConnection(QString hostname, QString usernamepassword, QStatusBar * statusbar, QPushButton * button) {
     statusbar->showMessage("Connecting to " + hostname.toLocal8Bit() + " please wait!", 5000);
     button->setEnabled(false);
+    appendToFile("Connecting to " + hostname.toLocal8Bit(), QDir::homePath() + "/XIPE/Cluster\ Mngmt/logs", "log_" + Variables::logTime + ".txt");
     QByteArray jsonString = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ns=\"http://www.cisco.com/AXL/API/8.5\">";
     jsonString += "<soapenv:Body><ns:executeSQLQuery><sql>SELECT enduser.userid,enduser.firstname,enduser.middlename,enduser.lastname,enduser.islocaluser from enduser where enduser.firstname LIKE 'A%'</sql></ns:executeSQLQuery></SOAP-ENV:Envelope>";
     QByteArray postDataSize = QByteArray::number(jsonString.size());
@@ -124,22 +157,27 @@ bool EndusersClusterMngmtMainWindow::addConnection(QString hostname, QString use
     QByteArray response = reply->readAll();
     QVariant statusCode = reply->attribute( QNetworkRequest::HttpStatusCodeAttribute );
     //progbar.close();//Why does this close, entire application window?
+    int status = statusCode.toInt();
+
     if ( !statusCode.isValid() ) {
-        statusbar->showMessage("Connection to " + hostname.toLocal8Bit() + " failed! Status Code: " + statusCode.toByteArray(), 3000);
+        statusbar->showMessage("Connection to " + hostname.toLocal8Bit() + " failed! Status Code: " + QString::number(status), 3000);
+        appendToFile("Connection to " + hostname.toLocal8Bit() + " failed! Status Code: " + QString::number(status), QDir::homePath() + "/XIPE/Cluster\ Mngmt/logs", "log_" + Variables::logTime + ".txt");
         button->setEnabled(true);
         return false;
     }
 
-    int status = statusCode.toInt();
+
 
     if ( status != 200 ) {
         QString reason = reply->attribute( QNetworkRequest::HttpReasonPhraseAttribute ).toString();
         button->setEnabled(true);
-        statusbar->showMessage("Connection to " + hostname.toLocal8Bit() + " failed! Status Code: " + statusCode.toByteArray(), 3000);
+        statusbar->showMessage("Connection to " + hostname.toLocal8Bit() + " failed! Status Code: " + QString::number(status), 3000);
+        appendToFile("Connection to " + hostname.toLocal8Bit() + " failed! Status Code: " + QString::number(status), QDir::homePath() + "/XIPE/Cluster\ Mngmt/logs", "log_" + Variables::logTime + ".txt");
         return false;
     } else {
         button->setEnabled(true);
         statusbar->showMessage("Successfully connected to " + hostname.toLocal8Bit() + "!", 3000);
+        appendToFile("Successfully connected to " + hostname.toLocal8Bit() + "!", QDir::homePath() + "/XIPE/Cluster\ Mngmt/logs", "log_" + Variables::logTime + ".txt");
         return true;
     }
     button->setEnabled(true);
@@ -189,13 +227,14 @@ void EndusersClusterMngmtMainWindow::on_btnAddCluster_clicked()
                         Variables::hostNames.append(ui->lineEditHostname->text());
                         Variables::usernamePasswords.append(base64_encode(ui->lineEditUsername->text() + QString::fromStdString(":") + ui->lineEditPassword->text()));
 
-                        QFile file( QDir::homePath() + "/XIPE/ClusterMngmt/test.txt" );
+                        QFile file( QDir::homePath() + "/XIPE/Cluster\ Mngmt/test.txt" );
                         if ( file.open(QIODevice::Append) )
                         {
                             QTextStream stream( &file );
                             stream << QString("<cluster><name>" + ui->lineEditClustername->text().toLocal8Bit() + "</name><host>" + ui->lineEditHostname->text().toLocal8Bit() + "</host><unpwd>" + base64_encode(ui->lineEditUsername->text() + QString::fromStdString(":") + ui->lineEditPassword->text()).toLocal8Bit() + "</unpwd></cluster>") << endl;
+                            file.close();
                         } else {
-                            qDebug() << "Why couldn't we wright?";
+                            qDebug() << "Why couldn't we, wright?";
                         }
 
                         ui->lineEditClustername->setText("");
@@ -214,11 +253,12 @@ void EndusersClusterMngmtMainWindow::on_btnAddCluster_clicked()
                         Variables::hostNames.append(ui->lineEditHostname->text());
                         Variables::usernamePasswords.append(base64_encode(ui->lineEditUsername->text() + QString::fromStdString(":") + ui->lineEditPassword->text()));
 
-                        QFile file( QDir::homePath() + "/XIPE/ClusterMngmt/test.txt" );
+                        QFile file( QDir::homePath() + "/XIPE/Cluster\ Mngmt/test.txt" );
                         if ( file.open(QIODevice::Append) )
                         {
                             QTextStream stream( &file );
                             stream << QString("<cluster><name>" + ui->lineEditClustername->text() + "</name><host>" + ui->lineEditHostname->text() + "</host><unpwd>" + base64_encode(ui->lineEditUsername->text() + QString::fromStdString(":") + ui->lineEditPassword->text()) + "</unpwd></cluster>") << endl;
+                            file.close();
                         }
 
                         ui->lineEditClustername->setText("");
@@ -238,11 +278,12 @@ void EndusersClusterMngmtMainWindow::on_btnAddCluster_clicked()
                     Variables::hostNames.append(ui->lineEditHostname->text());
                     Variables::usernamePasswords.append(base64_encode(ui->lineEditUsername->text() + QString::fromStdString(":") + ui->lineEditPassword->text()));
 
-                    QFile file( QDir::homePath() + "/XIPE/ClusterMngmt/test.txt" );
+                    QFile file( QDir::homePath() + "/XIPE/Cluster\ Mngmt/test.txt" );
                     if ( file.open(QIODevice::Append) )
                     {
                         QTextStream stream( &file );
                         stream << QString("<cluster><name>" + ui->lineEditClustername->text() + "</name><host>" + ui->lineEditHostname->text() + "</host><unpwd>" + base64_encode(ui->lineEditUsername->text() + QString::fromStdString(":") + ui->lineEditPassword->text()) + "</unpwd></cluster>") << endl;
+                        file.close();
                     }
 
                     ui->lineEditClustername->setText("");
@@ -267,11 +308,12 @@ void EndusersClusterMngmtMainWindow::on_btnAddCluster_clicked()
                         Variables::hostNames.append(ui->lineEditHostname->text());
                         Variables::usernamePasswords.append(base64_encode(ui->lineEditUsername->text() + QString::fromStdString(":") + ui->lineEditPassword->text()));
 
-                        QFile file( QDir::homePath() + "/XIPE/ClusterMngmt/test.txt" );
+                        QFile file( QDir::homePath() + "/XIPE/Cluster\ Mngmt/test.txt" );
                         if ( file.open(QIODevice::Append) )
                         {
                             QTextStream stream( &file );
                             stream << QString("<cluster><name>" + ui->lineEditHostname->text() + "</name><host>" + ui->lineEditHostname->text() + "</host><unpwd>" + base64_encode(ui->lineEditUsername->text() + QString::fromStdString(":") + ui->lineEditPassword->text()) + "</unpwd></cluster>") << endl;
+                            file.close();
                         }
 
                         ui->lineEditClustername->setText("");
@@ -290,11 +332,12 @@ void EndusersClusterMngmtMainWindow::on_btnAddCluster_clicked()
                         Variables::hostNames.append(ui->lineEditHostname->text());
                         Variables::usernamePasswords.append(base64_encode(ui->lineEditUsername->text() + QString::fromStdString(":") + ui->lineEditPassword->text()));
 
-                        QFile file( QDir::homePath() + "/XIPE/ClusterMngmt/test.txt" );
+                        QFile file( QDir::homePath() + "/XIPE/Cluster\ Mngmt/test.txt" );
                         if ( file.open(QIODevice::Append) )
                         {
                             QTextStream stream( &file );
                             stream << QString("<cluster><name>" + ui->lineEditHostname->text().toLocal8Bit() + "</name><host>" + ui->lineEditHostname->text().toLocal8Bit() + "</host><unpwd>" + base64_encode(ui->lineEditUsername->text() + QString::fromStdString(":") + ui->lineEditPassword->text()).toLocal8Bit() + "</unpwd></cluster>") << endl;
+                            file.close();
                         }
 
                         ui->lineEditClustername->setText("");
@@ -314,11 +357,12 @@ void EndusersClusterMngmtMainWindow::on_btnAddCluster_clicked()
                     Variables::hostNames.append(ui->lineEditHostname->text());
                     Variables::usernamePasswords.append(base64_encode(ui->lineEditUsername->text() + QString::fromStdString(":") + ui->lineEditPassword->text()));
 
-                    QFile file( QDir::homePath() + "/XIPE/ClusterMngmt/test.txt" );
+                    QFile file( QDir::homePath() + "/XIPE/Cluster\ Mngmt/test.txt" );
                     if ( file.open(QIODevice::Append) )
                     {
                         QTextStream stream( &file );
                         stream << QString("<cluster><name>" + ui->lineEditHostname->text() + "</name><host>" + ui->lineEditHostname->text() + "</host><unpwd>" + base64_encode(ui->lineEditUsername->text() + QString::fromStdString(":") + ui->lineEditPassword->text()) + "</unpwd></cluster>") << endl;
+                        file.close();
                     }
 
                     ui->lineEditClustername->setText("");
@@ -340,4 +384,29 @@ void EndusersClusterMngmtMainWindow::on_pushButtonTestConnections_clicked()
             if (addConnection(Variables::hostNames[i], Variables::usernamePasswords[i], ui->statusbar, ui->btnAddCluster))
                 ui->listWidget->item(i)->setCheckState(Qt::Checked);
     }
+}
+
+void EndusersClusterMngmtMainWindow::on_lineEditClustername_returnPressed()
+{
+    on_btnAddCluster_clicked();
+}
+
+void EndusersClusterMngmtMainWindow::on_lineEditHostname_returnPressed()
+{
+    on_btnAddCluster_clicked();
+}
+
+void EndusersClusterMngmtMainWindow::on_lineEditUsername_returnPressed()
+{
+    on_btnAddCluster_clicked();
+}
+
+void EndusersClusterMngmtMainWindow::on_lineEditPassword_returnPressed()
+{
+    on_btnAddCluster_clicked();
+}
+
+void EndusersClusterMngmtMainWindow::on_listWidget_customContextMenuRequested(const QPoint &pos)
+{
+    qDebug() << "Right clicked...";
 }

@@ -32,6 +32,8 @@ private slots:
 
     void on_tabWidgetClusters_currentChanged(int index);
 
+    void on_lineEditQueryData_returnPressed();
+    void appendToFile(QString text, QString filePath, QString fileName);
 private:
     Ui::EndusersClusterMngmtTabsWindow *ui;
 };
