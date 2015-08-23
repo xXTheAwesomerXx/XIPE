@@ -23,6 +23,9 @@
          <layout class="QVBoxLayout" name="verticalLayout_3">
           <item>
            <widget class="QLineEdit" name="lineEditHostIP">
+            <property name="text">
+             <string>10.0.0.93</string>
+            </property>
             <property name="placeholderText">
              <string>Host IP Address</string>
             </property>
@@ -30,6 +33,9 @@
           </item>
           <item>
            <widget class="QLineEdit" name="lineEditHostUsername">
+            <property name="text">
+             <string>appadmin</string>
+            </property>
             <property name="placeholderText">
              <string>Host Username</string>
             </property>
@@ -37,6 +43,9 @@
           </item>
           <item>
            <widget class="QLineEdit" name="lineEditHostPassword">
+            <property name="text">
+             <string>cisco123</string>
+            </property>
             <property name="echoMode">
              <enum>QLineEdit::PasswordEchoOnEdit</enum>
             </property>

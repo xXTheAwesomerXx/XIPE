@@ -24,7 +24,9 @@ SOURCES += main.cpp\
     endusersclustermngmtmainwindow.cpp \
     endusersclustermngmttabswindow.cpp \
     uccxmigrationmainwindow.cpp \
-    clustermngmtcustomlist.cpp
+    clustermngmtcustomlist.cpp \
+    uccxtabbedwindow.cpp \
+    uccxmigrationtab.cpp
 
 HEADERS  += mainwindow.h \
     clustertab.h \
@@ -34,7 +36,9 @@ HEADERS  += mainwindow.h \
     endusersclustermngmtmainwindow.h \
     endusersclustermngmttabswindow.h \
     uccxmigrationmainwindow.h \
-    clustermngmtcustomlist.h
+    clustermngmtcustomlist.h \
+    uccxtabbedwindow.h \
+    uccxmigrationtab.h
 
 FORMS    += mainwindow.ui \
     clustertab.ui \
@@ -42,4 +46,6 @@ FORMS    += mainwindow.ui \
     findusersmngmt.ui \
     endusersclustermngmtmainwindow.ui \
     endusersclustermngmttabswindow.ui \
-    uccxmigrationmainwindow.ui
+    uccxmigrationmainwindow.ui \
+    uccxtabbedwindow.ui \
+    uccxmigrationtab.ui

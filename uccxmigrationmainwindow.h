@@ -28,6 +28,8 @@ private slots:
 
     void on_pushButtonTestClient_clicked();
 
+    void on_pushButtonProceed_clicked();
+
 private:
     Ui::UCCXMigrationMainWindow *ui;
 };

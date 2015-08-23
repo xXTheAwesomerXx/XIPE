@@ -275,7 +275,7 @@ void EndusersClusterMngmtTabsWindow::addUsersToCluster(QString hostname, QString
             }
         }
         }
-        statusbar->showMessage("Successful Updates: " + QString::number(goodAdditions) + " Failed Updates: " + QString::number(badAdditions) + ", " + QString::number(totalUpdates - (badAdditions + goodAdditions)) + " updates left!", 5000);
+        statusbar->showMessage("Successful Updates: " + QString::number(goodAdditions) + " | Failed Updates: " + QString::number(badAdditions) + " | Progress: " + QString::number(badAdditions + goodAdditions) + "/" + QString::number(totalUpdates) + " | " + QString::number(totalUpdates - (goodAdditions + badAdditions)) + " left", 5000);
     }
 }
 
@@ -332,7 +332,7 @@ void EndusersClusterMngmtTabsWindow::removeUsersfromCluster(QString hostname, QS
             }
         }
     }
-        statusbar->showMessage("Successful Updates: " + QString::number(goodAdditions) + " Failed Updates: " + QString::number(badAdditions) + ", " + QString::number(totalUpdates - (badAdditions + goodAdditions)) + " updates left!", 5000);
+        statusbar->showMessage("Successful Updates: " + QString::number(goodAdditions) + " | Failed Updates: " + QString::number(badAdditions) + " | Progress: " + QString::number(badAdditions + goodAdditions) + "/" + QString::number(totalUpdates) + " | " + QString::number(totalUpdates - (goodAdditions + badAdditions)) + " left", 5000);
     }
 }
 

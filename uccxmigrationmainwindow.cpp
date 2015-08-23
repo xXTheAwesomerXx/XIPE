@@ -1,5 +1,6 @@
 #include "uccxmigrationmainwindow.h"
 #include "ui_uccxmigrationmainwindow.h"
+#include "uccxtabbedwindow.h"
 #include <QDebug>
 #include <QUrl>
 #include <QtNetwork/QNetworkRequest>
@@ -155,4 +156,11 @@ void UCCXMigrationMainWindow::on_pushButtonTestClient_clicked()
     } else {
         ui->pushButtonTestClient->setEnabled(true);
     }
+}
+
+void UCCXMigrationMainWindow::on_pushButtonProceed_clicked()
+{
+    this->hide();
+    UCCXTabbedWindow * tabbedMainWindow = new UCCXTabbedWindow();
+    tabbedMainWindow->show();
 }
