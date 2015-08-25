@@ -27,6 +27,8 @@ private slots:
     void getDetailedSkillData(QString refURL, QString usernamepassword);
     bool getAllRGData(QString hostname, QString usernamepassword, QString filePath);
     void getDetailedRGData(QString refURL, QString usernamepassword);
+    bool getAllCSQData(QString hostname, QString usernamepassword, QString filePath);
+    void getDetailedCSQData(QString refURL, QString usernamepassword);
     void onfinish(QNetworkReply *rep);
     void onError(QNetworkReply::NetworkError reply);
 

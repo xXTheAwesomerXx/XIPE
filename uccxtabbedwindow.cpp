@@ -20,7 +20,8 @@
 #include "variables.h"
 using namespace Variables;
 QVector<QTableWidget*> myTableWidgets;
-QVector<QString> teamRefLinks, appRefLinks, skillRefLinks, rgRefLinks;
+QVector<QString> teamRefLinks, appRefLinks, skillRefLinks, rgRefLinks, csqRefLinks, triggerRefLinks;
+QVector<QString> newTeamRefLinks, newAppRefLinks, newSkillRefLinks, newRGRefLinks, newCSQRefLinks, newTriggerRefLinks;
 UCCXTabbedWindow::UCCXTabbedWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::UCCXTabbedWindow)
@@ -57,6 +58,9 @@ UCCXTabbedWindow::UCCXTabbedWindow(QWidget *parent) :
         rgHeaders << "Name" << "ID";
         myTableWidgets[1]->setColumnCount(2);
         myTableWidgets[1]->setHorizontalHeaderLabels(rgHeaders);
+        csqHeaders << "Name" << "ID";
+        myTableWidgets[3]->setColumnCount(2);
+        myTableWidgets[3]->setHorizontalHeaderLabels(csqHeaders);
 }
 
 UCCXTabbedWindow::~UCCXTabbedWindow()
@@ -504,6 +508,94 @@ void UCCXTabbedWindow::getDetailedRGData(QString refURL, QString usernamepasswor
     }
 }
 
+bool UCCXTabbedWindow::getAllCSQData(QString hostname, QString usernamepassword, QString filePath) {
+    qDebug() << "Getting CSQ data";
+    QUrl req("https://" + hostname.toLocal8Bit() + "/adminapi/csq");
+    QNetworkRequest request(req);
+    request.setRawHeader("Authorization", "Basic " + usernamepassword.toLocal8Bit());
+    QNetworkAccessManager test;
+    QEventLoop loop;
+    connect(&test, SIGNAL(finished(QNetworkReply*)), &loop, SLOT(quit()));
+    QNetworkReply * reply = test.get(request);
+    reply->ignoreSslErrors(); // Ignore only unsigned later on
+    connect(reply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(onError(QNetworkReply::NetworkError)));
+    loop.exec();
+
+    QByteArray response = reply->readAll();
+    QVariant statusCode = reply->attribute( QNetworkRequest::HttpStatusCodeAttribute );
+    //progbar.close();//Why does this close, entire application window?
+    if ( !statusCode.isValid() ) {
+        qDebug() << "Failed to get ref links";
+    }
+
+    int status = statusCode.toInt();
+
+    if ( status != 200 ) {
+        QString reason = reply->attribute( QNetworkRequest::HttpReasonPhraseAttribute ).toString();
+        qDebug() << "Couldn't get ref. links";
+        return false;
+    } else {
+        qDebug() << "Connected, lets get ref links";
+        qDebug() << response;
+        QDomDocument doc;
+        doc.setContent(response);
+        QDomNodeList apps = doc.elementsByTagName("csq");
+        for (int i = 0; i < apps.size(); i++) {
+            QDomNode n = apps.item(i);
+            QDomElement self = n.firstChildElement("self");
+            rgRefLinks.append(self.text());
+            qDebug() << rgRefLinks[i];
+        }
+        return true;
+    }
+    return false;
+}
+
+void UCCXTabbedWindow::getDetailedCSQData(QString refURL, QString usernamepassword) {
+    qDebug() << "Getting csq data";
+    QUrl req(refURL);
+    QNetworkRequest request(req);
+    request.setRawHeader("Authorization", "Basic " + usernamepassword.toLocal8Bit());
+    QNetworkAccessManager test;
+    QEventLoop loop;
+    connect(&test, SIGNAL(finished(QNetworkReply*)), &loop, SLOT(quit()));
+    QNetworkReply * reply = test.get(request);
+    reply->ignoreSslErrors(); // Ignore only unsigned later on
+    connect(reply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(onError(QNetworkReply::NetworkError)));
+    loop.exec();
+
+    QByteArray response = reply->readAll();
+    QVariant statusCode = reply->attribute( QNetworkRequest::HttpStatusCodeAttribute );
+    //progbar.close();//Why does this close, entire application window?
+    if ( !statusCode.isValid() ) {
+        qDebug() << "Failed to get csq data";
+    }
+
+    int status = statusCode.toInt();
+
+    if ( status != 200 ) {
+        QString reason = reply->attribute( QNetworkRequest::HttpReasonPhraseAttribute ).toString();
+        qDebug() << "Couldn't get csq data";
+    } else {
+        qDebug() << "Connected, lets get the csq data";
+        //qDebug() << response;
+        QDomDocument doc;
+        doc.setContent(response);
+        QDomNodeList app = doc.elementsByTagName("csq");
+        for (int i = 0; i < app.size(); i++) {
+            QDomNode n = app.item(i);
+            QDomElement skillName = n.firstChildElement("name");
+            QDomElement skillId = n.firstChildElement("id");
+            myTableWidgets[3]->insertRow(myTableWidgets[3]->rowCount());
+            qDebug() << "New row count is: " << myTableWidgets[3]->rowCount();
+            int row = myTableWidgets[3]->rowCount() - 1;
+            myTableWidgets[3]->setItem(row, 0, new QTableWidgetItem(skillName.text()));
+            myTableWidgets[3]->setItem(row, 1, new QTableWidgetItem(skillId.text()));
+            myTableWidgets[3]->resizeColumnsToContents();
+        }
+    }
+}
+
 void UCCXTabbedWindow::on_pushButton_clicked()
 {
     if (getAllTeamData(Variables::uccxHostIP, Variables::uccxHostUsernamePwd, "")) {
@@ -529,6 +621,12 @@ void UCCXTabbedWindow::on_pushButton_clicked()
         for (int i = 0; i < rgRefLinks.count(); i++) {
             rgRefLinks[i].replace("+", "%20");
             getDetailedRGData(rgRefLinks[i], Variables::uccxHostUsernamePwd);
+        }
+    }
+    if (getAllCSQData(Variables::uccxHostIP, Variables::uccxHostUsernamePwd, "")) {
+        for (int i = 0; i < csqRefLinks.count(); i++) {
+            csqRefLinks[i].replace("+", "%20");
+            getDetailedCSQData(csqRefLinks[i], Variables::uccxHostUsernamePwd);
         }
     }
 }
