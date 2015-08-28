@@ -82,7 +82,7 @@ void UCCXMigrationMainWindow::appendToFile(QString text, QString filePath, QStri
 }
 
 bool UCCXMigrationMainWindow::testConnection(QString hostname, QString usernamepassword, QStatusBar * statusbar) {
-    statusbar->showMessage("Connecting to " + hostname.toLocal8Bit() + " please wait!", 3000);
+    statusbar->showMessage("Connecting to " + hostname.toLocal8Bit() + " please wait!");
     QUrl req("https://" + hostname.toLocal8Bit() + "/adminapi/team");
     QNetworkRequest request(req);
 
@@ -101,7 +101,7 @@ bool UCCXMigrationMainWindow::testConnection(QString hostname, QString usernamep
     QVariant statusCode = reply->attribute( QNetworkRequest::HttpStatusCodeAttribute );
     //progbar.close();//Why does this close, entire application window?
     if ( !statusCode.isValid() ) {
-        statusbar->showMessage("Connection to " + hostname.toLocal8Bit() + " failed! Status Code: " + statusCode.toByteArray(), 3000);
+        statusbar->showMessage("Connection to " + hostname.toLocal8Bit() + " failed! Status Code: " + statusCode.toByteArray());
         return false;
     }
 
@@ -109,10 +109,10 @@ bool UCCXMigrationMainWindow::testConnection(QString hostname, QString usernamep
 
     if ( status != 200 ) {
         QString reason = reply->attribute( QNetworkRequest::HttpReasonPhraseAttribute ).toString();
-        statusbar->showMessage("Connection to " + hostname.toLocal8Bit() + " failed! Status Code: " + statusCode.toByteArray(), 3000);
+        statusbar->showMessage("Connection to " + hostname.toLocal8Bit() + " failed! Status Code: " + statusCode.toByteArray());
         return false;
     } else {
-        statusbar->showMessage("Successfully connected to " + hostname.toLocal8Bit() + "!", 3000);
+        statusbar->showMessage("Successfully connected to " + hostname.toLocal8Bit() + "!");
         return true;
     }
     return false;

@@ -22,6 +22,7 @@ using namespace Variables;
 QVector<QTableWidget*> myTableWidgets;
 QVector<QString> teamRefLinks, appRefLinks, skillRefLinks, rgRefLinks, csqRefLinks, triggerRefLinks;
 QVector<QString> newTeamRefLinks, newAppRefLinks, newSkillRefLinks, newRGRefLinks, newCSQRefLinks, newTriggerRefLinks;
+void writeToFile(QString text, QString filePath, QString fileName);
 UCCXTabbedWindow::UCCXTabbedWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::UCCXTabbedWindow)
@@ -61,11 +62,42 @@ UCCXTabbedWindow::UCCXTabbedWindow(QWidget *parent) :
         csqHeaders << "Name" << "ID";
         myTableWidgets[3]->setColumnCount(2);
         myTableWidgets[3]->setHorizontalHeaderLabels(csqHeaders);
+        triggerHeaders << "Directory Number" << "HRef";
+        myTableWidgets[5]->setColumnCount(2);
+        myTableWidgets[5]->setHorizontalHeaderLabels(triggerHeaders);
 }
 
 UCCXTabbedWindow::~UCCXTabbedWindow()
 {
     delete ui;
+}
+
+void writeToFile(QString text, QString filePath, QString fileName) {
+    QFile logFile(filePath + "/" + fileName);
+    QDir logDir;
+    if (logDir.exists(filePath)) {
+        qDebug() << "path exists";
+        if (logFile.open(QIODevice::Append)) {
+            qDebug() << "file opened!";
+            QTextStream in(&logFile);
+                   in << text;
+                   logFile.close();
+        } else {
+            qDebug() << "Failed to open file........";
+        }
+    } else {
+        if (logDir.mkpath(filePath)) {
+            qDebug() << "We made the path";
+            if (logFile.open(QIODevice::Append)) {
+                qDebug() << "file opened!";
+                QTextStream in(&logFile);
+                       in << text;
+                       logFile.close();
+            } else {
+                qDebug() << "Failed to open file........";
+            }
+        }
+    }
 }
 
 void UCCXTabbedWindow::onfinish(QNetworkReply *rep)
@@ -233,6 +265,7 @@ void UCCXTabbedWindow::getDetailedTeamData(QString refURL, QString usernamepassw
             }
             myTableWidgets[4]->setCellWidget(row, 5, csqListWidget);
             myTableWidgets[4]->resizeColumnsToContents();
+            writeToFile(response, QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/Teams", teamname.text() + ".xml");
             qDebug() << teamId.text() << teamname.text() << self.text();
         }
     }
@@ -328,6 +361,7 @@ void UCCXTabbedWindow::getDetailedAppData(QString refURL, QString usernamepasswo
             myTableWidgets[2]->setItem(row, 3, new QTableWidgetItem(appDesc.text()));
             myTableWidgets[2]->setItem(row, 4, new QTableWidgetItem(appEnabled.text()));
             myTableWidgets[2]->resizeColumnsToContents();
+            writeToFile(response, QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/Applications", appName.text() + ".xml");
         }
     }
 }
@@ -416,6 +450,7 @@ void UCCXTabbedWindow::getDetailedSkillData(QString refURL, QString usernamepass
             myTableWidgets[0]->setItem(row, 0, new QTableWidgetItem(skillName.text()));
             myTableWidgets[0]->setItem(row, 1, new QTableWidgetItem(skillId.text()));
             myTableWidgets[0]->resizeColumnsToContents();
+            writeToFile(response, QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/Skills", skillName.text() + ".xml");
         }
     }
 }
@@ -504,6 +539,7 @@ void UCCXTabbedWindow::getDetailedRGData(QString refURL, QString usernamepasswor
             myTableWidgets[1]->setItem(row, 0, new QTableWidgetItem(skillName.text()));
             myTableWidgets[1]->setItem(row, 1, new QTableWidgetItem(skillId.text()));
             myTableWidgets[1]->resizeColumnsToContents();
+            writeToFile(response, QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/Resource\ Groups", skillName.text() + ".xml");
         }
     }
 }
@@ -543,8 +579,8 @@ bool UCCXTabbedWindow::getAllCSQData(QString hostname, QString usernamepassword,
         for (int i = 0; i < apps.size(); i++) {
             QDomNode n = apps.item(i);
             QDomElement self = n.firstChildElement("self");
-            rgRefLinks.append(self.text());
-            qDebug() << rgRefLinks[i];
+            csqRefLinks.append(self.text());
+            qDebug() << csqRefLinks[i];
         }
         return true;
     }
@@ -585,6 +621,7 @@ void UCCXTabbedWindow::getDetailedCSQData(QString refURL, QString usernamepasswo
         for (int i = 0; i < app.size(); i++) {
             QDomNode n = app.item(i);
             QDomElement skillName = n.firstChildElement("name");
+            qDebug() << skillName.text();
             QDomElement skillId = n.firstChildElement("id");
             myTableWidgets[3]->insertRow(myTableWidgets[3]->rowCount());
             qDebug() << "New row count is: " << myTableWidgets[3]->rowCount();
@@ -592,6 +629,100 @@ void UCCXTabbedWindow::getDetailedCSQData(QString refURL, QString usernamepasswo
             myTableWidgets[3]->setItem(row, 0, new QTableWidgetItem(skillName.text()));
             myTableWidgets[3]->setItem(row, 1, new QTableWidgetItem(skillId.text()));
             myTableWidgets[3]->resizeColumnsToContents();
+            writeToFile(response, QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/CSQs", skillName.text() + ".xml");
+        }
+    }
+}
+
+bool UCCXTabbedWindow::getAllTriggerData(QString hostname, QString usernamepassword, QString filePath) {
+    qDebug() << "Getting CSQ data";
+    QUrl req("https://" + hostname.toLocal8Bit() + "/adminapi/trigger");
+    QNetworkRequest request(req);
+    request.setRawHeader("Authorization", "Basic " + usernamepassword.toLocal8Bit());
+    QNetworkAccessManager test;
+    QEventLoop loop;
+    connect(&test, SIGNAL(finished(QNetworkReply*)), &loop, SLOT(quit()));
+    QNetworkReply * reply = test.get(request);
+    reply->ignoreSslErrors(); // Ignore only unsigned later on
+    connect(reply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(onError(QNetworkReply::NetworkError)));
+    loop.exec();
+
+    QByteArray response = reply->readAll();
+    QVariant statusCode = reply->attribute( QNetworkRequest::HttpStatusCodeAttribute );
+    //progbar.close();//Why does this close, entire application window?
+    if ( !statusCode.isValid() ) {
+        qDebug() << "Failed to get ref links";
+    }
+
+    int status = statusCode.toInt();
+
+    if ( status != 200 ) {
+        QString reason = reply->attribute( QNetworkRequest::HttpReasonPhraseAttribute ).toString();
+        qDebug() << "Couldn't get ref. links";
+        return false;
+    } else {
+        qDebug() << "Connected, lets get ref links";
+        qDebug() << response;
+        QDomDocument doc;
+        doc.setContent(response);
+        QDomNodeList apps = doc.elementsByTagName("trigger");
+        for (int i = 0; i < apps.size(); i++) {
+            QDomNode n = apps.item(i);
+            QDomElement self = n.firstChildElement("self");
+            QDomAttr selfURL = self.attributeNode("href");
+            triggerRefLinks.append(selfURL.value());
+            qDebug() << triggerRefLinks[i];
+        }
+        return true;
+    }
+    return false;
+}
+
+void UCCXTabbedWindow::getDetailedTriggerData(QString refURL, QString usernamepassword) {
+    qDebug() << "Getting trigger data";
+    QUrl req(refURL);
+    QNetworkRequest request(req);
+    request.setRawHeader("Authorization", "Basic " + usernamepassword.toLocal8Bit());
+    QNetworkAccessManager test;
+    QEventLoop loop;
+    connect(&test, SIGNAL(finished(QNetworkReply*)), &loop, SLOT(quit()));
+    QNetworkReply * reply = test.get(request);
+    reply->ignoreSslErrors(); // Ignore only unsigned later on
+    connect(reply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(onError(QNetworkReply::NetworkError)));
+    loop.exec();
+
+    QByteArray response = reply->readAll();
+    QVariant statusCode = reply->attribute( QNetworkRequest::HttpStatusCodeAttribute );
+    //progbar.close();//Why does this close, entire application window?
+    if ( !statusCode.isValid() ) {
+        qDebug() << "Failed to get trigger data";
+    }
+
+    int status = statusCode.toInt();
+
+    if ( status != 200 ) {
+        QString reason = reply->attribute( QNetworkRequest::HttpReasonPhraseAttribute ).toString();
+        qDebug() << "Couldn't get trigger data";
+    } else {
+        qDebug() << "Connected, lets get the trigger data";
+        //qDebug() << response;
+        QDomDocument doc;
+        doc.setContent(response);
+        QDomNodeList app = doc.elementsByTagName("trigger");
+
+
+        for (int i = 0; i < app.size(); i++) {
+            QDomNode n = app.item(i);
+            QDomElement self = n.firstChildElement("self");
+            QDomAttr selfURL = self.attributeNode("href");
+            QDomElement dirNum = n.firstChildElement("directoryNumber");
+            myTableWidgets[5]->insertRow(myTableWidgets[5]->rowCount());
+            qDebug() << "New row count is: " << myTableWidgets[5]->rowCount();
+            int row = myTableWidgets[5]->rowCount() - 1;
+            myTableWidgets[5]->setItem(row, 0, new QTableWidgetItem(dirNum.text()));
+            myTableWidgets[5]->setItem(row, 1, new QTableWidgetItem(selfURL.value()));
+            myTableWidgets[5]->resizeColumnsToContents();
+            writeToFile(response, QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/Triggers", dirNum.text() + ".xml");
         }
     }
 }
@@ -618,6 +749,7 @@ void UCCXTabbedWindow::on_pushButton_clicked()
         }
     }
     if (getAllRGData(Variables::uccxHostIP, Variables::uccxHostUsernamePwd, "")) {
+        qDebug() << rgRefLinks.count() << " RG Count!";
         for (int i = 0; i < rgRefLinks.count(); i++) {
             rgRefLinks[i].replace("+", "%20");
             getDetailedRGData(rgRefLinks[i], Variables::uccxHostUsernamePwd);
@@ -627,6 +759,14 @@ void UCCXTabbedWindow::on_pushButton_clicked()
         for (int i = 0; i < csqRefLinks.count(); i++) {
             csqRefLinks[i].replace("+", "%20");
             getDetailedCSQData(csqRefLinks[i], Variables::uccxHostUsernamePwd);
+        }
+    }
+    qDebug() << triggerRefLinks.count() << " Trigger Count!";
+    if (getAllTriggerData(Variables::uccxHostIP, Variables::uccxHostUsernamePwd, "")) {
+        qDebug() << triggerRefLinks.count() << " Trigger Count!";
+        for (int i = 0; i < triggerRefLinks.count(); i++) {
+            triggerRefLinks[i].replace("+", "%20");
+            getDetailedTriggerData(triggerRefLinks[i], Variables::uccxHostUsernamePwd);
         }
     }
 }

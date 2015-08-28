@@ -132,7 +132,7 @@ void EndusersClusterMngmtMainWindow::on_pushButtonProceedToMngmt_clicked()
 }
 
 bool EndusersClusterMngmtMainWindow::addConnection(QString hostname, QString usernamepassword, QStatusBar * statusbar, QPushButton * button) {
-    statusbar->showMessage("Connecting to " + hostname.toLocal8Bit() + " please wait!", 5000);
+    statusbar->showMessage("Connecting to " + hostname.toLocal8Bit() + " please wait!");
     button->setEnabled(false);
     appendToFile("Connecting to " + hostname.toLocal8Bit(), QDir::homePath() + "/XIPE/Cluster\ Mngmt/logs", "log_" + Variables::logTime + ".txt");
     QByteArray jsonString = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ns=\"http://www.cisco.com/AXL/API/8.5\">";
@@ -160,7 +160,7 @@ bool EndusersClusterMngmtMainWindow::addConnection(QString hostname, QString use
     int status = statusCode.toInt();
 
     if ( !statusCode.isValid() ) {
-        statusbar->showMessage("Connection to " + hostname.toLocal8Bit() + " failed! Status Code: " + QString::number(status), 3000);
+        statusbar->showMessage("Connection to " + hostname.toLocal8Bit() + " failed! Status Code: " + QString::number(status));
         appendToFile("Connection to " + hostname.toLocal8Bit() + " failed! Status Code: " + QString::number(status), QDir::homePath() + "/XIPE/Cluster\ Mngmt/logs", "log_" + Variables::logTime + ".txt");
         button->setEnabled(true);
         return false;
@@ -171,12 +171,12 @@ bool EndusersClusterMngmtMainWindow::addConnection(QString hostname, QString use
     if ( status != 200 ) {
         QString reason = reply->attribute( QNetworkRequest::HttpReasonPhraseAttribute ).toString();
         button->setEnabled(true);
-        statusbar->showMessage("Connection to " + hostname.toLocal8Bit() + " failed! Status Code: " + QString::number(status), 3000);
+        statusbar->showMessage("Connection to " + hostname.toLocal8Bit() + " failed! Status Code: " + QString::number(status));
         appendToFile("Connection to " + hostname.toLocal8Bit() + " failed! Status Code: " + QString::number(status), QDir::homePath() + "/XIPE/Cluster\ Mngmt/logs", "log_" + Variables::logTime + ".txt");
         return false;
     } else {
         button->setEnabled(true);
-        statusbar->showMessage("Successfully connected to " + hostname.toLocal8Bit() + "!", 3000);
+        statusbar->showMessage("Successfully connected to " + hostname.toLocal8Bit() + "!");
         appendToFile("Successfully connected to " + hostname.toLocal8Bit() + "!", QDir::homePath() + "/XIPE/Cluster\ Mngmt/logs", "log_" + Variables::logTime + ".txt");
         return true;
     }

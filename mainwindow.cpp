@@ -8,7 +8,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    //this->setStyleSheet("QPushButton {background: #3498db;border-style: outset;border-width: 2px;border-radius: 10px;font-family: Arial;color: #ffffff;font-size: 20px;padding: 10px 20px 10px 20px;text-decoration: none;}");
+    this->setStyleSheet("QPushButton {background: #3498db;border-style: outset;border-width: 2px;border-radius: 10px;font-family: Arial;color: #ffffff;font-size: 20px;padding: 10px 20px 10px 20px;text-decoration: none;}");
 }
 
 MainWindow::~MainWindow()

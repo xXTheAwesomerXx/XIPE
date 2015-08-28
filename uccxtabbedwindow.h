@@ -29,6 +29,8 @@ private slots:
     void getDetailedRGData(QString refURL, QString usernamepassword);
     bool getAllCSQData(QString hostname, QString usernamepassword, QString filePath);
     void getDetailedCSQData(QString refURL, QString usernamepassword);
+    bool getAllTriggerData(QString hostname, QString usernamepassword, QString filePath);
+    void getDetailedTriggerData(QString refURL, QString usernamepassword);
     void onfinish(QNetworkReply *rep);
     void onError(QNetworkReply::NetworkError reply);
 

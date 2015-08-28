@@ -274,8 +274,8 @@ void EndusersClusterMngmtTabsWindow::addUsersToCluster(QString hostname, QString
                 appendToFile("Failed to add user id " + userid.toLocal8Bit() + " to cluster " + hostname.toLocal8Bit(), QDir::homePath() + "/XIPE/ClusterMngmt/logs", "log_" + Variables::logTime + ".txt");
             }
         }
+        statusbar->showMessage("Successful Updates: " + QString::number(goodAdditions) + " | Failed Updates: " + QString::number(badAdditions) + " | Progress: " + QString::number(badAdditions + goodAdditions) + "/" + QString::number(totalUpdates) + " | " + QString::number(totalUpdates - (goodAdditions + badAdditions)) + " left");
         }
-        statusbar->showMessage("Successful Updates: " + QString::number(goodAdditions) + " | Failed Updates: " + QString::number(badAdditions) + " | Progress: " + QString::number(badAdditions + goodAdditions) + "/" + QString::number(totalUpdates) + " | " + QString::number(totalUpdates - (goodAdditions + badAdditions)) + " left", 5000);
     }
 }
 
@@ -331,8 +331,8 @@ void EndusersClusterMngmtTabsWindow::removeUsersfromCluster(QString hostname, QS
                 appendToFile("Failed to remove userid " + userid.toLocal8Bit() + " from cluster " + hostname.toLocal8Bit(), QDir::homePath() + "/XIPE/ClusterMngmt/logs", "log_" + Variables::logTime + ".txt");
             }
         }
+        statusbar->showMessage("Successful Updates: " + QString::number(goodAdditions) + " | Failed Updates: " + QString::number(badAdditions) + " | Progress: " + QString::number(badAdditions + goodAdditions) + "/" + QString::number(totalUpdates) + " | " + QString::number(totalUpdates - (goodAdditions + badAdditions)) + " left");
     }
-        statusbar->showMessage("Successful Updates: " + QString::number(goodAdditions) + " | Failed Updates: " + QString::number(badAdditions) + " | Progress: " + QString::number(badAdditions + goodAdditions) + "/" + QString::number(totalUpdates) + " | " + QString::number(totalUpdates - (goodAdditions + badAdditions)) + " left", 5000);
     }
 }
 
@@ -356,7 +356,7 @@ void EndusersClusterMngmtTabsWindow::on_btnFindUsers_clicked()
     ui->btnAddEndusersToCluster->setEnabled(true);
     ui->btnRemoveEndusersFromCluster->setEnabled(true);
     QString *string = messageString[ui->tabWidgetClusters->currentIndex()];
-        ui->statusbar->showMessage(QString::fromLocal8Bit(string->toLocal8Bit()), 3000);
+        ui->statusbar->showMessage(QString::fromLocal8Bit(string->toLocal8Bit()));
 }
 
 void EndusersClusterMngmtTabsWindow::on_comboBoxType_activated(int index)
@@ -411,7 +411,7 @@ void EndusersClusterMngmtTabsWindow::on_tabWidgetClusters_currentChanged(int ind
 {
     //change the messages
         QString *string = messageString[index];
-            ui->statusbar->showMessage(QString::fromLocal8Bit(string->toLocal8Bit()), 3000);
+            ui->statusbar->showMessage(QString::fromLocal8Bit(string->toLocal8Bit()));
 }
 
 

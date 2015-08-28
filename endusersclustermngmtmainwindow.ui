@@ -76,7 +76,7 @@
        </layout>
       </item>
       <item>
-       <widget class="ClusterMngmtCustomList" name="listWidget"/>
+       <widget class="QListWidget" name="listWidget"/>
       </item>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -130,13 +130,6 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>ClusterMngmtCustomList</class>
-   <extends>QListWidget</extends>
-   <header location="global">clustermngmtcustomlist.h</header>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections/>
 </ui>
