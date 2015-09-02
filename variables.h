@@ -13,7 +13,7 @@ namespace Variables
     extern QVector<QString> clusterNamesF;
     extern QVector<QString> hostNamesF;
     extern QVector<QString> usernamePasswordsF;
-    extern QString uccxHostIP, uccxHostUsernamePwd, uccxClientIP, uccxClientUsernamePwd;
+    extern QString uccxHostIP, uccxHostUsernamePwd, uccxClientIP, uccxClientUsernamePwd, defaultPrimarySupName, defaultPrimarySupRefURL;
     extern QString logTime;
 }
 #endif // VARIABLES_H

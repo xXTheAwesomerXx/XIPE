@@ -11,7 +11,7 @@ namespace Variables
    QVector<QString> clusterNamesF;
    QVector<QString> hostNamesF;
    QVector<QString> usernamePasswordsF;
-   QString uccxHostIP, uccxHostUsernamePwd, uccxClientIP, uccxClientUsernamePwd;
+   QString uccxHostIP, uccxHostUsernamePwd, uccxClientIP, uccxClientUsernamePwd, defaultPrimarySupName, defaultPrimarySupRefURL;
    QString logTime = QString::number(QDateTime::currentMSecsSinceEpoch());
 }
 

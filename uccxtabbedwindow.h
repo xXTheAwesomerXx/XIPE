@@ -34,6 +34,8 @@ private slots:
     void onfinish(QNetworkReply *rep);
     void onError(QNetworkReply::NetworkError reply);
 
+    void on_pushButton_3_clicked();
+
 private:
     Ui::UCCXTabbedWindow *ui;
     enum COLUMNS {
