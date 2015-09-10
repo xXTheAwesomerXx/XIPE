@@ -151,7 +151,7 @@ void EndusersClusterMngmtTabsWindow::findUsers(QString hostname, QString usernam
             + condition1String + ") " + condition2String + "</sql></ns:executeSQLQuery></SOAP-ENV:Envelope>";
     }
     QString jsonLogString(getSubstringBetween(jsonString, "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ns=\"http://www.cisco.com/AXL/API/8.5\"><soapenv:Body><ns:executeSQLQuery><sql>", "</sql></ns:executeSQLQuery></SOAP-ENV:Envelope>"));
-    appendToFile("Execute Query: " + jsonLogString.toLocal8Bit(), QDir::homePath() + "/XIPE/ClusterMngmt/logs", "log_" + Variables::logTime + ".txt");
+    appendToFile("Execute Query: " + jsonLogString.toLocal8Bit(), QDir::homePath() + "/XIPE/Cluster\ Mngmt/logs", "log_" + Variables::logTime + ".txt");
     QByteArray postDataSize = QByteArray::number(jsonString.size());
     QUrl req("https://" + hostname.toLocal8Bit() + ":8443/axl/");
     QNetworkRequest request(req);
@@ -179,7 +179,7 @@ void EndusersClusterMngmtTabsWindow::findUsers(QString hostname, QString usernam
 
     if ( status != 200 ) {
         QString reason = reply->attribute( QNetworkRequest::HttpReasonPhraseAttribute ).toString();
-        appendToFile("Failed to connect to " + hostname.toLocal8Bit() + " for find users query!", QDir::homePath() + "/XIPE/ClusterMngmt/logs", "log_" + Variables::logTime + ".txt");
+        appendToFile("Failed to connect to " + hostname.toLocal8Bit() + " for find users query!", QDir::homePath() + "/XIPE/Cluster\ Mngmt/logs", "log_" + Variables::logTime + ".txt");
     } else {
         //qDebug() << response;
         QDomDocument doc;
@@ -218,7 +218,7 @@ void EndusersClusterMngmtTabsWindow::findUsers(QString hostname, QString usernam
             QString* messageStringToAdd = new QString("Query returned " + QString::number(rates.size()) + " results, " + QString::number(list2->count()) + " Endusers reside in this cluster and " + QString::number(list->count()) + " Endusers do not!");
             messageString[itemIndex] = messageStringToAdd;
             QString logString(messageStringToAdd->toLocal8Bit());
-            appendToFile(logString, QDir::homePath() + "/XIPE/ClusterMngmt/logs", "log_" + Variables::logTime + ".txt");
+            appendToFile(logString, QDir::homePath() + "/XIPE/Cluster\ Mngmt/logs", "log_" + Variables::logTime + ".txt");
     }
 }
 
@@ -261,17 +261,17 @@ void EndusersClusterMngmtTabsWindow::addUsersToCluster(QString hostname, QString
 
         if ( status != 200 ) {
             QString reason = reply->attribute( QNetworkRequest::HttpReasonPhraseAttribute ).toString();
-            appendToFile("Failed to connect to " + hostname.toLocal8Bit() + " for add user update on userid: " + userid.toLocal8Bit(), QDir::homePath() + "/XIPE/ClusterMngmt/logs", "log_" + Variables::logTime + ".txt");
+            appendToFile("Failed to connect to " + hostname.toLocal8Bit() + " for add user update on userid: " + userid.toLocal8Bit(), QDir::homePath() + "/XIPE/Cluster\ Mngmt/logs", "log_" + Variables::logTime + ".txt");
         } else {
             if (response.contains("<rowsUpdated>1</rowsUpdated>")) {
                 delete userToRemove;
                 list2->addItem(userToAdd);
                 userToAdd->setBackground(QColor(0, 170, 255));//Correct the color scheme
                 goodAdditions++;
-                appendToFile("Successfully added userid " + userid.toLocal8Bit() + " to cluster " + hostname.toLocal8Bit(), QDir::homePath() + "/XIPE/ClusterMngmt/logs", "log_" + Variables::logTime + ".txt");
+                appendToFile("Successfully added userid " + userid.toLocal8Bit() + " to cluster " + hostname.toLocal8Bit(), QDir::homePath() + "/XIPE/Cluster\ Mngmt/logs", "log_" + Variables::logTime + ".txt");
             } else {
                 badAdditions++;
-                appendToFile("Failed to add user id " + userid.toLocal8Bit() + " to cluster " + hostname.toLocal8Bit(), QDir::homePath() + "/XIPE/ClusterMngmt/logs", "log_" + Variables::logTime + ".txt");
+                appendToFile("Failed to add user id " + userid.toLocal8Bit() + " to cluster " + hostname.toLocal8Bit(), QDir::homePath() + "/XIPE/Cluster\ Mngmt/logs", "log_" + Variables::logTime + ".txt");
             }
         }
         statusbar->showMessage("Successful Updates: " + QString::number(goodAdditions) + " | Failed Updates: " + QString::number(badAdditions) + " | Progress: " + QString::number(badAdditions + goodAdditions) + "/" + QString::number(totalUpdates) + " | " + QString::number(totalUpdates - (goodAdditions + badAdditions)) + " left");
@@ -318,17 +318,17 @@ void EndusersClusterMngmtTabsWindow::removeUsersfromCluster(QString hostname, QS
 
         if ( status != 200 ) {
             QString reason = reply->attribute( QNetworkRequest::HttpReasonPhraseAttribute ).toString();
-           appendToFile("Failed to connect to " + hostname.toLocal8Bit() + " for add user update on userid: " + userid.toLocal8Bit(), QDir::homePath() + "/XIPE/ClusterMngmt/logs", "log_" + Variables::logTime + ".txt");
+           appendToFile("Failed to connect to " + hostname.toLocal8Bit() + " for add user update on userid: " + userid.toLocal8Bit(), QDir::homePath() + "/XIPE/Cluster\ Mngmt/logs", "log_" + Variables::logTime + ".txt");
         } else {
             if (response.contains("<rowsUpdated>1</rowsUpdated>")) {
                 delete userToRemove;
                 list2->addItem(userToAdd);
                 userToAdd->setBackground(QColor(170, 0, 0));//Correct the color scheme
                 goodAdditions++;
-                appendToFile("Successfully removed userid " + userid.toLocal8Bit() + " from cluster " + hostname.toLocal8Bit(), QDir::homePath() + "/XIPE/ClusterMngmt/logs", "log_" + Variables::logTime + ".txt");
+                appendToFile("Successfully removed userid " + userid.toLocal8Bit() + " from cluster " + hostname.toLocal8Bit(), QDir::homePath() + "/XIPE/Cluster\ Mngmt/logs", "log_" + Variables::logTime + ".txt");
             } else {
                 badAdditions++;
-                appendToFile("Failed to remove userid " + userid.toLocal8Bit() + " from cluster " + hostname.toLocal8Bit(), QDir::homePath() + "/XIPE/ClusterMngmt/logs", "log_" + Variables::logTime + ".txt");
+                appendToFile("Failed to remove userid " + userid.toLocal8Bit() + " from cluster " + hostname.toLocal8Bit(), QDir::homePath() + "/XIPE/Cluster\ Mngmt/logs", "log_" + Variables::logTime + ".txt");
             }
         }
         statusbar->showMessage("Successful Updates: " + QString::number(goodAdditions) + " | Failed Updates: " + QString::number(badAdditions) + " | Progress: " + QString::number(badAdditions + goodAdditions) + "/" + QString::number(totalUpdates) + " | " + QString::number(totalUpdates - (goodAdditions + badAdditions)) + " left");

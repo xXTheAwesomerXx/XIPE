@@ -23,50 +23,52 @@ using namespace Variables;
 QVector<QTableWidget*> myTableWidgets;
 QVector<QString> teamRefLinks, appRefLinks, skillRefLinks, rgRefLinks, csqRefLinks, triggerRefLinks;
 QVector<QString> newTeamRefLinks, newAppRefLinks, newSkillRefLinks, newRGRefLinks, newCSQRefLinks, newTriggerRefLinks;
-QVector<QString> skillNames, rgNames, appNames, csqNames;
+QVector<QString> skillNames, rgNames, appNames, csqNames, teamNames;
 void writeToFile(QString text, QString filePath, QString fileName);
 UCCXTabbedWindow::UCCXTabbedWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::UCCXTabbedWindow)
 {
     ui->setupUi(this);
-        UCCXMigrationTab * skillTab = new UCCXMigrationTab();
-        myTableWidgets.append(skillTab->tableWidget);
-        ui->tabWidget->addTab(skillTab, "Skills");
-        UCCXMigrationTab * rgTab = new UCCXMigrationTab();
-        myTableWidgets.append(rgTab->tableWidget);
-        ui->tabWidget->addTab(rgTab, "Resource Groups");
-        UCCXMigrationTab * appTab = new UCCXMigrationTab();
-        myTableWidgets.append(appTab->tableWidget);
-        ui->tabWidget->addTab(appTab, "Applications");
-        UCCXMigrationTab * csqTab = new UCCXMigrationTab();
-        myTableWidgets.append(csqTab->tableWidget);
-        ui->tabWidget->addTab(csqTab, "CSQs");
-        UCCXMigrationTab * teamTab = new UCCXMigrationTab();
-        myTableWidgets.append(teamTab->tableWidget);
-        ui->tabWidget->addTab(teamTab, "Teams");
-        UCCXMigrationTab * triggerTab = new UCCXMigrationTab();
-        myTableWidgets.append(triggerTab->tableWidget);
-        ui->tabWidget->addTab(triggerTab, "Triggers");
-        QStringList skillHeaders, rgHeaders, appHeaders, csqHeaders, teamHeaders, triggerHeaders;
-        teamHeaders << "Name" << "ID" << "Primary Supervisor" << "Secondary Supervisor" << "Resources" << "CSQs";
-        myTableWidgets[4]->setColumnCount(6);
-        myTableWidgets[4]->setHorizontalHeaderLabels(teamHeaders);
-        appHeaders << "Name" << "ID" << "Type" << "Description" << "Enabled";
-        myTableWidgets[2]->setColumnCount(5);
-        myTableWidgets[2]->setHorizontalHeaderLabels(appHeaders);
-        skillHeaders << "Name" << "ID";
-        myTableWidgets[0]->setColumnCount(2);
-        myTableWidgets[0]->setHorizontalHeaderLabels(skillHeaders);
-        rgHeaders << "Name" << "ID";
-        myTableWidgets[1]->setColumnCount(2);
-        myTableWidgets[1]->setHorizontalHeaderLabels(rgHeaders);
-        csqHeaders << "Name" << "ID";
-        myTableWidgets[3]->setColumnCount(2);
-        myTableWidgets[3]->setHorizontalHeaderLabels(csqHeaders);
-        triggerHeaders << "Directory Number" << "HRef";
-        myTableWidgets[5]->setColumnCount(2);
-        myTableWidgets[5]->setHorizontalHeaderLabels(triggerHeaders);
+    Variables::uccxClientIP = Variables::uccxHostIP;
+    Variables::uccxClientUsernamePwd = Variables::uccxHostUsernamePwd;
+    UCCXMigrationTab * skillTab = new UCCXMigrationTab();
+    myTableWidgets.append(skillTab->tableWidget);
+    ui->tabWidget->addTab(skillTab, "Skills");
+    UCCXMigrationTab * rgTab = new UCCXMigrationTab();
+    myTableWidgets.append(rgTab->tableWidget);
+    ui->tabWidget->addTab(rgTab, "Resource Groups");
+    UCCXMigrationTab * appTab = new UCCXMigrationTab();
+    myTableWidgets.append(appTab->tableWidget);
+    ui->tabWidget->addTab(appTab, "Applications");
+    UCCXMigrationTab * csqTab = new UCCXMigrationTab();
+    myTableWidgets.append(csqTab->tableWidget);
+    ui->tabWidget->addTab(csqTab, "CSQs");
+    UCCXMigrationTab * teamTab = new UCCXMigrationTab();
+    myTableWidgets.append(teamTab->tableWidget);
+    ui->tabWidget->addTab(teamTab, "Teams");
+    UCCXMigrationTab * triggerTab = new UCCXMigrationTab();
+    myTableWidgets.append(triggerTab->tableWidget);
+    ui->tabWidget->addTab(triggerTab, "Triggers");
+    QStringList skillHeaders, rgHeaders, appHeaders, csqHeaders, teamHeaders, triggerHeaders;
+    teamHeaders << "Name" << "ID" << "Primary Supervisor" << "Secondary Supervisor" << "Resources" << "CSQs";
+    myTableWidgets[4]->setColumnCount(6);
+    myTableWidgets[4]->setHorizontalHeaderLabels(teamHeaders);
+    appHeaders << "Name" << "ID" << "Type" << "Description" << "Enabled";
+    myTableWidgets[2]->setColumnCount(5);
+    myTableWidgets[2]->setHorizontalHeaderLabels(appHeaders);
+    skillHeaders << "Name" << "ID";
+    myTableWidgets[0]->setColumnCount(2);
+    myTableWidgets[0]->setHorizontalHeaderLabels(skillHeaders);
+    rgHeaders << "Name" << "ID";
+    myTableWidgets[1]->setColumnCount(2);
+    myTableWidgets[1]->setHorizontalHeaderLabels(rgHeaders);
+    csqHeaders << "Name" << "ID";
+    myTableWidgets[3]->setColumnCount(2);
+    myTableWidgets[3]->setHorizontalHeaderLabels(csqHeaders);
+    triggerHeaders << "Directory Number" << "HRef";
+    myTableWidgets[5]->setColumnCount(2);
+    myTableWidgets[5]->setHorizontalHeaderLabels(triggerHeaders);
 }
 
 UCCXTabbedWindow::~UCCXTabbedWindow()
@@ -80,21 +82,21 @@ void writeToFile(QString text, QString filePath, QString fileName) {
     if (logDir.exists(filePath)) {
         qDebug() << "path exists";
         if (logFile.open(QIODevice::Append)) {
-            qDebug() << "file opened!";
+            qDebug() << "file opened! " + logFile.fileName();
             QTextStream in(&logFile);
-                   in << text;
-                   logFile.close();
+            in << text;
+            logFile.close();
         } else {
             qDebug() << "Failed to open file........";
         }
     } else {
         if (logDir.mkpath(filePath)) {
-            qDebug() << "We made the path";
+            qDebug() << "We made the path" + logDir.absolutePath();
             if (logFile.open(QIODevice::Append)) {
                 qDebug() << "file opened!";
                 QTextStream in(&logFile);
-                       in << text;
-                       logFile.close();
+                in << text;
+                logFile.close();
             } else {
                 qDebug() << "Failed to open file........";
             }
@@ -137,7 +139,7 @@ bool UCCXTabbedWindow::getAllTeamData(QString hostname, QString usernamepassword
     int status = statusCode.toInt();
 
     if ( status == 200 || status == 201 || status == 202 ) {
-       qDebug() << "Connected, lets get ref links";
+        qDebug() << "Connected, lets get ref links";
         qDebug() << response;
         QDomDocument doc;
         doc.setContent(response);
@@ -147,8 +149,11 @@ bool UCCXTabbedWindow::getAllTeamData(QString hostname, QString usernamepassword
             QDomElement self = n.firstChildElement("self");
             QDomElement teamId = n.firstChildElement("teamId");
             QDomElement teamname = n.firstChildElement("teamname");
-            teamRefLinks.append(self.text());
-            qDebug() << teamRefLinks[i];
+            if (teamname.text() != "Default") { //Lets not get the Default team.
+                teamRefLinks.append(self.text());
+                teamNames.append(teamname.text());
+            }
+            //qDebug() << teamRefLinks[i];
         }
         return true;
     } else {
@@ -790,42 +795,43 @@ void UCCXTabbedWindow::on_pushButton_3_clicked()
         QFile file(QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/Skills/" + skillNames[i].toLocal8Bit() + ".xml");
         if (file.open(QIODevice::ReadOnly)) {
             QTextStream in(&file);
-                   while (!in.atEnd())
-                   {
-                        QString line = in.readLine();
-                        line = line.replace("+", "%20");// escape the spaces
-                        writeToFile(line, QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/Skills/Parsed", skillNames[i].toLocal8Bit() + ".xml");
-                        qDebug() << "Pushing skill data";
-                        QUrl req("https://10.0.0.93/adminapi/skill");
-                        QNetworkRequest request(req);
-                        QByteArray postDataSize = QByteArray::number(line.size());
-                        request.setRawHeader("Content-Type", "text/xml");
-                        request.setRawHeader("Content-Length", postDataSize);
-                        request.setRawHeader("Authorization", "Basic " + Variables::uccxHostUsernamePwd.toLocal8Bit());
-                        QNetworkAccessManager test;
-                        QEventLoop loop;
-                        connect(&test, SIGNAL(finished(QNetworkReply*)), &loop, SLOT(quit()));
-                        QNetworkReply * reply = test.post(request, line.toLocal8Bit());
-                        reply->ignoreSslErrors(); // Ignore only unsigned later on
-                        connect(reply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(onError(QNetworkReply::NetworkError)));
-                        loop.exec();
+            while (!in.atEnd())
+            {
+                QString line = in.readLine();
+                line = line.replace("+", "%20");// escape the spaces
+                writeToFile(line, QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/Skills/Parsed", skillNames[i].toLocal8Bit() + ".xml");
+                qDebug() << "Pushing skill data";
+                QUrl req("https://10.0.0.93/adminapi/skill");
+                QNetworkRequest request(req);
+                QByteArray postDataSize = QByteArray::number(line.size());
+                request.setRawHeader("Content-Type", "text/xml");
+                request.setRawHeader("Content-Length", postDataSize);
+                request.setRawHeader("Authorization", "Basic " + Variables::uccxHostUsernamePwd.toLocal8Bit());
+                QNetworkAccessManager test;
+                QEventLoop loop;
+                connect(&test, SIGNAL(finished(QNetworkReply*)), &loop, SLOT(quit()));
+                QNetworkReply * reply = test.post(request, line.toLocal8Bit());
+                reply->ignoreSslErrors(); // Ignore only unsigned later on
+                connect(reply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(onError(QNetworkReply::NetworkError)));
+                loop.exec();
 
-                        QByteArray response = reply->readAll();
-                        QVariant statusCode = reply->attribute( QNetworkRequest::HttpStatusCodeAttribute );
-                        //progbar.close();//Why does this close, entire application window?
-                        if ( !statusCode.isValid() ) {
-                            qDebug() << "Failed to get trigger data";
-                        }
+                QByteArray response = reply->readAll();
+                QVariant statusCode = reply->attribute( QNetworkRequest::HttpStatusCodeAttribute );
+                //progbar.close();//Why does this close, entire application window?
+                if ( !statusCode.isValid() ) {
+                    qDebug() << "Failed to get trigger data";
+                }
 
-                        int status = statusCode.toInt();
+                int status = statusCode.toInt();
 
-                        if ( status == 200 || status == 201 || status == 202 ) {
-                            qDebug() << "New Skill at: " + response;
-                            newSkillRefLinks.append(QString(response));//this will cause the new ref link to be in the same index
-                        } else {
-                            QString reason = reply->attribute( QNetworkRequest::HttpReasonPhraseAttribute ).toString();
-                        }
-                   }
+                if ( status == 200 || status == 201 || status == 202 ) {
+                    qDebug() << "New Skill at: " + response;
+                    QString newStringToAdd = QString::fromLocal8Bit(response);
+                    newSkillRefLinks.append(newStringToAdd);//this will cause the new ref link to be in the same index
+                } else {
+                    QString reason = reply->attribute( QNetworkRequest::HttpReasonPhraseAttribute ).toString();
+                }
+            }
         } else {
             qDebug() << "Couldn't open skill to push!";
         }
@@ -837,42 +843,42 @@ void UCCXTabbedWindow::on_pushButton_3_clicked()
         QFile file(QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/Resource\ Groups/" + rgNames[i].toLocal8Bit() + ".xml");
         if (file.open(QIODevice::ReadOnly)) {
             QTextStream in(&file);
-                   while (!in.atEnd())
-                   {
-                        QString line = in.readLine();
-                        line = line.replace("+", "%20");// escape the spaces
-                        writeToFile(line, QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/Resource\ Groups/Parsed", rgNames[i].toLocal8Bit() + ".xml");
-                        qDebug() << "Pushing rg data";
-                        QUrl req("https://10.0.0.93/adminapi/resourceGroup");
-                        QNetworkRequest request(req);
-                        QByteArray postDataSize = QByteArray::number(line.size());
-                        request.setRawHeader("Content-Type", "text/xml");
-                        request.setRawHeader("Content-Length", postDataSize);
-                        request.setRawHeader("Authorization", "Basic " + Variables::uccxHostUsernamePwd.toLocal8Bit());
-                        QNetworkAccessManager test;
-                        QEventLoop loop;
-                        connect(&test, SIGNAL(finished(QNetworkReply*)), &loop, SLOT(quit()));
-                        QNetworkReply * reply = test.post(request, line.toLocal8Bit());
-                        reply->ignoreSslErrors(); // Ignore only unsigned later on
-                        connect(reply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(onError(QNetworkReply::NetworkError)));
-                        loop.exec();
+            while (!in.atEnd())
+            {
+                QString line = in.readLine();
+                line = line.replace("+", "%20");// escape the spaces
+                writeToFile(line, QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/Resource\ Groups/Parsed", rgNames[i].toLocal8Bit() + ".xml");
+                qDebug() << "Pushing rg data";
+                QUrl req("https://10.0.0.93/adminapi/resourceGroup");
+                QNetworkRequest request(req);
+                QByteArray postDataSize = QByteArray::number(line.size());
+                request.setRawHeader("Content-Type", "text/xml");
+                request.setRawHeader("Content-Length", postDataSize);
+                request.setRawHeader("Authorization", "Basic " + Variables::uccxHostUsernamePwd.toLocal8Bit());
+                QNetworkAccessManager test;
+                QEventLoop loop;
+                connect(&test, SIGNAL(finished(QNetworkReply*)), &loop, SLOT(quit()));
+                QNetworkReply * reply = test.post(request, line.toLocal8Bit());
+                reply->ignoreSslErrors(); // Ignore only unsigned later on
+                connect(reply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(onError(QNetworkReply::NetworkError)));
+                loop.exec();
 
-                        QByteArray response = reply->readAll();
-                        QVariant statusCode = reply->attribute( QNetworkRequest::HttpStatusCodeAttribute );
-                        //progbar.close();//Why does this close, entire application window?
-                        if ( !statusCode.isValid() ) {
-                            qDebug() << "Failed to get rg data";
-                        }
+                QByteArray response = reply->readAll();
+                QVariant statusCode = reply->attribute( QNetworkRequest::HttpStatusCodeAttribute );
+                //progbar.close();//Why does this close, entire application window?
+                if ( !statusCode.isValid() ) {
+                    qDebug() << "Failed to get rg data";
+                }
 
-                        int status = statusCode.toInt();
+                int status = statusCode.toInt();
 
-                        if ( status == 200 || status == 201 || status == 202 ) {
-                            qDebug() << "New RG at: " + response;
-                            newRGRefLinks.append(QString(response));//this will cause the new ref link to be in the same index
-                        } else {
-                            QString reason = reply->attribute( QNetworkRequest::HttpReasonPhraseAttribute ).toString();
-                        }
-                   }
+                if ( status == 200 || status == 201 || status == 202 ) {
+                    qDebug() << "New RG at: " + response;
+                    newRGRefLinks.append(QString(response));//this will cause the new ref link to be in the same index
+                } else {
+                    QString reason = reply->attribute( QNetworkRequest::HttpReasonPhraseAttribute ).toString();
+                }
+            }
         } else {
             qDebug() << "Couldn't open rg to push!";
         }
@@ -884,96 +890,231 @@ void UCCXTabbedWindow::on_pushButton_3_clicked()
         QFile file(QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/Applications/" + appNames[i].toLocal8Bit() + ".xml");
         if (file.open(QIODevice::ReadOnly)) {
             QTextStream in(&file);
-                   while (!in.atEnd())
-                   {
-                        QString line = in.readLine();
-                        line = line.replace("+", "%20");// escape the spaces
-                        writeToFile(line, QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/Applications/Parsed", rgNames[i].toLocal8Bit() + ".xml");
-                        qDebug() << "Pushing app data";
-                        QUrl req("https://10.0.0.93/adminapi/application");
-                        QNetworkRequest request(req);
-                        QByteArray postDataSize = QByteArray::number(line.size());
-                        request.setRawHeader("Content-Type", "text/xml");
-                        request.setRawHeader("Content-Length", postDataSize);
-                        request.setRawHeader("Authorization", "Basic " + Variables::uccxHostUsernamePwd.toLocal8Bit());
-                        QNetworkAccessManager test;
-                        QEventLoop loop;
-                        connect(&test, SIGNAL(finished(QNetworkReply*)), &loop, SLOT(quit()));
-                        QNetworkReply * reply = test.post(request, line.toLocal8Bit());
-                        reply->ignoreSslErrors(); // Ignore only unsigned later on
-                        connect(reply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(onError(QNetworkReply::NetworkError)));
-                        loop.exec();
+            while (!in.atEnd())
+            {
+                QString line = in.readLine();
+                line = line.replace("+", "%20");// escape the spaces
+                writeToFile(line, QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/Applications/Parsed", rgNames[i].toLocal8Bit() + ".xml");
+                qDebug() << "Pushing app data";
+                QUrl req("https://10.0.0.93/adminapi/application");
+                QNetworkRequest request(req);
+                QByteArray postDataSize = QByteArray::number(line.size());
+                request.setRawHeader("Content-Type", "text/xml");
+                request.setRawHeader("Content-Length", postDataSize);
+                request.setRawHeader("Authorization", "Basic " + Variables::uccxHostUsernamePwd.toLocal8Bit());
+                QNetworkAccessManager test;
+                QEventLoop loop;
+                connect(&test, SIGNAL(finished(QNetworkReply*)), &loop, SLOT(quit()));
+                QNetworkReply * reply = test.post(request, line.toLocal8Bit());
+                reply->ignoreSslErrors(); // Ignore only unsigned later on
+                connect(reply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(onError(QNetworkReply::NetworkError)));
+                loop.exec();
 
-                        QByteArray response = reply->readAll();
-                        QVariant statusCode = reply->attribute( QNetworkRequest::HttpStatusCodeAttribute );
-                        //progbar.close();//Why does this close, entire application window?
-                        if ( !statusCode.isValid() ) {
-                            qDebug() << "Failed to get app data";
-                        }
+                QByteArray response = reply->readAll();
+                QVariant statusCode = reply->attribute( QNetworkRequest::HttpStatusCodeAttribute );
+                //progbar.close();//Why does this close, entire application window?
+                if ( !statusCode.isValid() ) {
+                    qDebug() << "Failed to get app data";
+                }
 
-                        int status = statusCode.toInt();
+                int status = statusCode.toInt();
 
-                        if ( status == 200 || status == 201 || status == 202 ) {
-                            qDebug() << "New app at: " + response;
-                            newAppRefLinks.append(QString(response));//this will cause the new ref link to be in the same index
-                        } else {
-                            QString reason = reply->attribute( QNetworkRequest::HttpReasonPhraseAttribute ).toString();
-                        }
-                   }
+                if ( status == 200 || status == 201 || status == 202 ) {
+                    qDebug() << "New app at: " + response;
+                    newAppRefLinks.append(QString(response));//this will cause the new ref link to be in the same index
+                } else {
+                    QString reason = reply->attribute( QNetworkRequest::HttpReasonPhraseAttribute ).toString();
+                }
+            }
         } else {
             qDebug() << "Couldn't open app to push!";
         }
     }
     // -- End get files in Dir
 
-    // lets do csqs
+    // lets parse csqs
     qDebug() << "CSQ Count: " << QString::number(csqNames.count());
     for (int i = 0; i < csqNames.count(); i++) {
         QFile file(QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/CSQs/" + csqNames[i].toLocal8Bit() + ".xml");
         if (file.open(QIODevice::ReadOnly | QFile::Text)) {
             QTextStream in(&file);
-                        QString line = in.readAll();
-                        line = line.replace("+", "%20");// escape the spaces
-                        /*Parse CSQ Data*/
-                        QDomDocument doc;
-                        doc.setContent(line.toLocal8Bit());
-                        qDebug() << "Regular:" << line;
-                        qDebug() << in.readAll();
-                        QDomNodeList csq = doc.elementsByTagName("csq");
-                        for (int i = 0; i < csq.size(); i++) {
-                            QDomNode n = csq.item(i);
-                            QDomElement resourcePoolType = n.firstChildElement("resourcePoolType");
-                            QDomElement poolSpecificInfo = n.firstChildElement("poolSpecificInfo");
+            QString line = in.readAll();
+            line = line.replace("+", "%20");// escape the spaces
+            line = line.replace("///", "//");//Why are there three backslashes to a url?
+            /*Parse CSQ Data*/
+            QDomDocument doc;
+            doc.setContent(line.toLocal8Bit());
+            qDebug() << in.readAll();
+            QDomNodeList csq = doc.elementsByTagName("csq");
+            for (int i = 0; i < csq.size(); i++) {
 
-                            if (resourcePoolType.text() == "SKILL_GROUP") { //if it's not a skill group, why parse for skill groups?
-                                QDomElement skillGroup = poolSpecificInfo.firstChildElement("skillGroup");
-                                QDomElement skillCompetency = skillGroup.firstChildElement("skillCompetency");
-                                QDomElement skillNameUriPair = skillCompetency.firstChildElement("skillNameUriPair");
-                                QDomAttr skillNameUriPairName = skillNameUriPair.attributeNode("name"); //csq skill name
-                                QDomElement skillRefURL = skillNameUriPair.firstChildElement("refURL");
-                                qDebug() << "CSQ Data: " << poolSpecificInfo.text() << skillGroup.text() << skillCompetency.text() << skillNameUriPair.text() << skillNameUriPairName.value() << skillRefURL.text();
-                                for (int i = 0; i < skillNames.count(); i++) {
-                                    if (skillRefURL.text() == skillRefLinks[i]) {
-                                        skillRefURL.firstChild().setNodeValue("A test Ref Link!");
-                                    }
-                                }
-                            } else if (resourcePoolType.text() == "RESOURCE_GROUP") { //if it's not a skill group, why parse for skill groups?
-                                QDomElement resourceGroup = poolSpecificInfo.firstChildElement("resourceGroup");
-                                QDomElement resourceGroupNameUriPair = resourceGroup.firstChildElement("resourceGroupNameUriPair");
-                                QDomAttr resourceGroupUriPairName = resourceGroupNameUriPair.attributeNode("name"); //csq rg name
-                                QDomElement resourceRefURL = resourceGroupNameUriPair.firstChildElement("refURL");
-                                for (int i = 0; i < rgNames.count(); i++) {
-                                    if (resourceRefURL.text() == rgRefLinks[i]) {
-                                        resourceRefURL.firstChild().setNodeValue("A test rg Ref Link!");
-                                    }
-                                }
+                QDomNode n = csq.item(i);
+                QDomElement resourcePoolType = n.firstChildElement("resourcePoolType");
+                QDomElement poolSpecificInfo = n.firstChildElement("poolSpecificInfo");
+
+                if (resourcePoolType.text() == "SKILL_GROUP") { //if it's not a skill group, why parse for skill groups?
+                    QDomElement skillGroup = poolSpecificInfo.firstChildElement("skillGroup");
+                    QDomNodeList skillCompetency = skillGroup.elementsByTagName("skillCompetency");
+                    for (int e = 0; e < skillCompetency.size(); e++) {
+                        QDomNode skillSet = skillCompetency.item(e);
+                        QDomElement skillNameUriPair = skillSet.firstChildElement("skillNameUriPair");
+                        QDomAttr skillNameUriPairName = skillNameUriPair.attributeNode("name"); //csq skill name
+                        QDomElement skillRefURL = skillNameUriPair.firstChildElement("refURL");
+                        for (int i = 0; i < skillNames.count(); i++) {
+                            qDebug() << "Old Ref: " + skillRefLinks[i].toLocal8Bit() + " New Ref Link:" + newSkillRefLinks[i].toLocal8Bit();
+                            if (skillRefURL.text() == skillRefLinks[i]) {
+                                qDebug() << "Replaced: " + skillRefURL.text() + " with, " + newSkillRefLinks[i].toLocal8Bit();
+                                skillRefURL.firstChild().setNodeValue(newSkillRefLinks[i]);
                             }
                         }
-                        writeToFile(doc.toString(), QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/CSQs/Parsed", csqNames[i].toLocal8Bit() + ".xml");
-                        qDebug() << "Pushing csq data";
-                   } else {
-            qDebug() << "Couldn't open app to push!";
+                    }
+                } else if (resourcePoolType.text() == "RESOURCE_GROUP") { //if it's not a skill group, why parse for skill groups?
+                    QDomElement resourceGroup = poolSpecificInfo.firstChildElement("resourceGroup");
+                    QDomElement resourceGroupNameUriPair = resourceGroup.firstChildElement("resourceGroupNameUriPair");
+                    QDomAttr resourceGroupUriPairName = resourceGroupNameUriPair.attributeNode("name"); //csq rg name
+                    QDomElement resourceRefURL = resourceGroupNameUriPair.firstChildElement("refURL");
+                    for (int i = 0; i < rgNames.count(); i++) {
+                        if (resourceRefURL.text() == rgRefLinks[i]) {
+                            resourceRefURL.firstChild().setNodeValue(newRGRefLinks[i]);
+                        }
+                    }
+                }
+
+            }
+            QString documentString = doc.toString();
+            documentString = documentString.replace(Variables::uccxHostIP, Variables::uccxClientIP);
+            writeToFile(documentString, QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/CSQs/Parsed", csqNames[i].toLocal8Bit() + ".xml");
+            qDebug() << "Pushing csq data";
+
+        } else {
+            qDebug() << "Couldn't open csq to push!";
+        }
+    } //At this point, we now know all CSQs have been parsed
+    // -- End parse files in Dir
+
+    // lets do csqs
+    for (int i = 0; i < csqNames.count(); i++) {
+        QFile file(QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/CSQs/Parsed/" + csqNames[i].toLocal8Bit() + ".xml");
+        if (file.open(QIODevice::ReadOnly | QFile::Text)) {
+            QTextStream in(&file);
+            QString line = in.readAll();
+            line = line.replace("+", "%20");// escape the spaces
+            qDebug() << "Pushing csq data";
+            QUrl req("https://10.0.0.93/adminapi/csq");
+            QNetworkRequest request(req);
+            QByteArray postDataSize = QByteArray::number(line.size());
+            request.setRawHeader("Content-Type", "text/xml");
+            request.setRawHeader("Content-Length", postDataSize);
+            request.setRawHeader("Authorization", "Basic " + Variables::uccxHostUsernamePwd.toLocal8Bit());
+            QNetworkAccessManager test;
+            QEventLoop loop;
+            connect(&test, SIGNAL(finished(QNetworkReply*)), &loop, SLOT(quit()));
+            QNetworkReply * reply = test.post(request, line.toLocal8Bit());
+            reply->ignoreSslErrors(); // Ignore only unsigned later on
+            connect(reply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(onError(QNetworkReply::NetworkError)));
+            loop.exec();
+
+            QByteArray response = reply->readAll();
+            QVariant statusCode = reply->attribute( QNetworkRequest::HttpStatusCodeAttribute );
+            //progbar.close();//Why does this close, entire application window?
+            if ( !statusCode.isValid() ) {
+                qDebug() << "Failed to get csq data";
+            }
+
+            int status = statusCode.toInt();
+
+            if ( status == 200 || status == 201 || status == 202 ) {
+                qDebug() << "New csq at: " + response;
+                newCSQRefLinks.append(QString(response));//this will cause the new ref link to be in the same index
+                writeToFile(line, QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/CSQs/Parsed/Finished", csqNames[i].toLocal8Bit() + ".xml");
+            } else {
+                writeToFile(line, QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/CSQs/Parsed/Finished", csqNames[i].toLocal8Bit() + ".xml");
+                QString reason = reply->attribute( QNetworkRequest::HttpReasonPhraseAttribute ).toString();
+            }
+        } else {
+            qDebug() << "Couldn't open csq to push!";
         }
     }
     // -- End get files in Dir
+
+    // lets parse teams
+    qDebug() << "Team Count: " << QString::number(teamNames.count());
+    for (int i = 0; i < teamNames.count(); i++) {
+        QFile file(QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/Teams/" + teamNames[i].toLocal8Bit() + ".xml");
+        if (file.open(QIODevice::ReadOnly | QFile::Text)) {
+            QTextStream in(&file);
+            QString line = in.readAll();
+            line = line.replace("+", "%20");// escape the spaces
+            line = line.replace("///", "//");//Why are there three backslashes to a url?
+            /*Parse CSQ Data*/
+            QDomDocument doc;
+            doc.setContent(line.toLocal8Bit());
+            qDebug() << in.readAll();
+            QDomNodeList csqs = doc.elementsByTagName("csq");
+            for (int c = 0; c < csqs.size(); c++) {
+                QDomNode r = csqs.item(c);
+                QDomElement resourceRef = r.firstChildElement("refURL");
+                qDebug() << "Team CSQ Ref: " << resourceRef.text();
+                for (int i = 0; i < csqNames.count(); i++) {
+                    if (resourceRef.text() == csqRefLinks[i]) {
+                        resourceRef.firstChild().setNodeValue(newCSQRefLinks[i]);
+                    }
+                }
+            }
+            QString documentString = doc.toString();
+            documentString = documentString.replace(Variables::uccxHostIP, Variables::uccxClientIP);
+            writeToFile(documentString, QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/Teams/Parsed", teamNames[i].toLocal8Bit() + ".xml");
+            qDebug() << "Pushing team data";
+
+        } else {
+            qDebug() << "Couldn't open team to push!";
+        }
+    } //At this point, we now know all teams have been parsed
+    // -- End parse files in Dir
+    /*
+    // lets do teams
+    for (int i = 0; i < csqNames.count(); i++) {
+        QFile file(QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/CSQs/Parsed/" + csqNames[i].toLocal8Bit() + ".xml");
+        if (file.open(QIODevice::ReadOnly | QFile::Text)) {
+            QTextStream in(&file);
+            QString line = in.readAll();
+            line = line.replace("+", "%20");// escape the spaces
+            qDebug() << "Pushing csq data";
+            QUrl req("https://10.0.0.93/adminapi/csq");
+            QNetworkRequest request(req);
+            QByteArray postDataSize = QByteArray::number(line.size());
+            request.setRawHeader("Content-Type", "text/xml");
+            request.setRawHeader("Content-Length", postDataSize);
+            request.setRawHeader("Authorization", "Basic " + Variables::uccxHostUsernamePwd.toLocal8Bit());
+            QNetworkAccessManager test;
+            QEventLoop loop;
+            connect(&test, SIGNAL(finished(QNetworkReply*)), &loop, SLOT(quit()));
+            QNetworkReply * reply = test.post(request, line.toLocal8Bit());
+            reply->ignoreSslErrors(); // Ignore only unsigned later on
+            connect(reply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(onError(QNetworkReply::NetworkError)));
+            loop.exec();
+
+            QByteArray response = reply->readAll();
+            QVariant statusCode = reply->attribute( QNetworkRequest::HttpStatusCodeAttribute );
+            //progbar.close();//Why does this close, entire application window?
+            if ( !statusCode.isValid() ) {
+                qDebug() << "Failed to get csq data";
+            }
+
+            int status = statusCode.toInt();
+
+            if ( status == 200 || status == 201 || status == 202 ) {
+                qDebug() << "New csq at: " + response;
+                newCSQRefLinks.append(QString(response));//this will cause the new ref link to be in the same index
+                writeToFile(line, QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/CSQs/Parsed/Finished", csqNames[i].toLocal8Bit() + ".xml");
+            } else {
+                QString reason = reply->attribute( QNetworkRequest::HttpReasonPhraseAttribute ).toString();
+            }
+        } else {
+            qDebug() << "Couldn't open csq to push!";
+        }
+    }
+    */
+    // -- End get files in Dir
 }
+
