@@ -23,7 +23,7 @@ using namespace Variables;
 QVector<QTableWidget*> myTableWidgets;
 QVector<QString> teamRefLinks, appRefLinks, skillRefLinks, rgRefLinks, csqRefLinks, triggerRefLinks;
 QVector<QString> newTeamRefLinks, newAppRefLinks, newSkillRefLinks, newRGRefLinks, newCSQRefLinks, newTriggerRefLinks;
-QVector<QString> skillNames, rgNames, appNames, csqNames, teamNames;
+QVector<QString> skillNames, rgNames, appNames, csqNames, teamNames, triggerNames;
 void writeToFile(QString text, QString filePath, QString fileName);
 UCCXTabbedWindow::UCCXTabbedWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -312,7 +312,7 @@ bool UCCXTabbedWindow::getAllAppData(QString hostname, QString usernamepassword,
             QDomElement appname = n.firstChildElement("applicationName");
             appRefLinks.append(self.text());
             appNames.append(appname.text());
-            qDebug() << appRefLinks[i];
+            qDebug() << "App Names: " << appRefLinks[i] << appNames[i];
         }
         return true;
     } else {
@@ -681,8 +681,10 @@ bool UCCXTabbedWindow::getAllTriggerData(QString hostname, QString usernamepassw
         for (int i = 0; i < apps.size(); i++) {
             QDomNode n = apps.item(i);
             QDomElement self = n.firstChildElement("self");
+            QDomElement dirNum = n.firstChildElement("directoryNumber");
             QDomAttr selfURL = self.attributeNode("href");
             triggerRefLinks.append(selfURL.value());
+            triggerNames.append(dirNum.text());
             qDebug() << triggerRefLinks[i];
         }
         return true;
@@ -754,7 +756,7 @@ void UCCXTabbedWindow::on_pushButton_clicked()
     }
     if (getAllAppData(Variables::uccxHostIP, Variables::uccxHostUsernamePwd, "")) {
         for (int i = 0; i < appRefLinks.count(); i++) {
-            appRefLinks[i].replace("+", "%20");
+            appRefLinks[i].replace("+", "%20");//dont replace these, because the full uri is used for parsing
             getDetailedAppData(appRefLinks[i], Variables::uccxHostUsernamePwd);
         }
     }
@@ -885,6 +887,7 @@ void UCCXTabbedWindow::on_pushButton_3_clicked()
     }
     // -- End get files in Dir
 
+    /*
     // lets do apps
     for (int i = 0; i < appNames.count(); i++) {
         QFile file(QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/Applications/" + appNames[i].toLocal8Bit() + ".xml");
@@ -894,7 +897,7 @@ void UCCXTabbedWindow::on_pushButton_3_clicked()
             {
                 QString line = in.readLine();
                 line = line.replace("+", "%20");// escape the spaces
-                writeToFile(line, QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/Applications/Parsed", rgNames[i].toLocal8Bit() + ".xml");
+                writeToFile(line, QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/Applications/Parsed", appNames[i].toLocal8Bit() + ".xml");
                 qDebug() << "Pushing app data";
                 QUrl req("https://10.0.0.93/adminapi/application");
                 QNetworkRequest request(req);
@@ -931,6 +934,113 @@ void UCCXTabbedWindow::on_pushButton_3_clicked()
         }
     }
     // -- End get files in Dir
+    */
+
+
+
+
+
+    // lets parse apps
+    qDebug() << "App Count: " << QString::number(appNames.count());
+    for (int i = 0; i < appNames.count(); i++) {
+        QFile file(QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/Applications/" + appNames[i].toLocal8Bit() + ".xml");
+        if (file.open(QIODevice::ReadOnly | QFile::Text)) {
+            QTextStream in(&file);
+            QString line = in.readAll();
+            line = line.replace("+", "%20");// escape the spaces
+            line = line.replace("///", "//");//Why are there three backslashes to a url?
+            /*Parse CSQ Data*/
+            QDomDocument doc;
+            doc.setContent(line.toLocal8Bit());
+            qDebug() << in.readAll();
+            QDomNodeList csq = doc.elementsByTagName("application");
+            for (int i = 0; i < csq.size(); i++) {
+                QDomElement applicationName = csq.at(i).firstChildElement("applicationName");
+                applicationName.firstChild().setNodeValue(applicationName.text().replace(" ", ""));
+                //Replace the space in the application name,
+                //because if we don't we get an error!
+            }
+            QString documentString = doc.toString();
+            documentString = documentString.replace(Variables::uccxHostIP, Variables::uccxClientIP);
+            writeToFile(documentString, QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/Applications/Parsed", appNames[i].toLocal8Bit() + ".xml");
+            qDebug() << "Pushing app data";
+
+        } else {
+            qDebug() << "Couldn't open app to push!";
+        }
+    } //At this point, we now know all Apps have been parsed
+    // -- End parse files in Dir
+
+    // lets do apps
+    for (int i = 0; i < appNames.count(); i++) {
+        QFile file(QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/Applications/Parsed/" + appNames[i].toLocal8Bit() + ".xml");
+        if (file.open(QIODevice::ReadOnly | QFile::Text)) {
+            QTextStream in(&file);
+            QString line = in.readAll();
+            line = line.replace("+", "%20");// escape the spaces
+            qDebug() << "Pushing app data";
+            QUrl req("https://10.0.0.93/adminapi/application");
+            QNetworkRequest request(req);
+            QByteArray postDataSize = QByteArray::number(line.size());
+            request.setRawHeader("Content-Type", "text/xml");
+            request.setRawHeader("Content-Length", postDataSize);
+            request.setRawHeader("Authorization", "Basic " + Variables::uccxHostUsernamePwd.toLocal8Bit());
+            QNetworkAccessManager test;
+            QEventLoop loop;
+            connect(&test, SIGNAL(finished(QNetworkReply*)), &loop, SLOT(quit()));
+            QNetworkReply * reply = test.post(request, line.toLocal8Bit());
+            reply->ignoreSslErrors(); // Ignore only unsigned later on
+            connect(reply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(onError(QNetworkReply::NetworkError)));
+            loop.exec();
+
+            QByteArray response = reply->readAll();
+            QVariant statusCode = reply->attribute( QNetworkRequest::HttpStatusCodeAttribute );
+            //progbar.close();//Why does this close, entire application window?
+            if ( !statusCode.isValid() ) {
+                qDebug() << "Failed to get csq data";
+            }
+
+            int status = statusCode.toInt();
+
+            if ( status == 200 || status == 201 || status == 202 ) {
+                qDebug() << "New app at: " + response;
+                newAppRefLinks.append(QString(response));//this will cause the new ref link to be in the same index
+                writeToFile(line, QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/Applications/Parsed/Finished", appNames[i].toLocal8Bit() + ".xml");
+            } else {
+                QString reason = reply->attribute( QNetworkRequest::HttpReasonPhraseAttribute ).toString();
+            }
+        } else {
+            qDebug() << "Couldn't open app to push!";
+        }
+    }
+    // -- End get files in Dir
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     // lets parse csqs
     qDebug() << "CSQ Count: " << QString::number(csqNames.count());
@@ -1111,6 +1221,97 @@ void UCCXTabbedWindow::on_pushButton_3_clicked()
             }
         } else {
             qDebug() << "Couldn't open team to push!";
+        }
+    }
+    // -- End get files in Dir
+
+    // lets parse triggers
+    qDebug() << "Trigger Count: " << QString::number(triggerNames.count());
+    for (int i = 0; i < triggerNames.count(); i++) {
+        QFile file(QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/Triggers/" + triggerNames[i].toLocal8Bit() + ".xml");
+        if (file.open(QIODevice::ReadOnly | QFile::Text)) {
+            QTextStream in(&file);
+            QString line = in.readAll();
+            line = line.replace("+", "%20");// escape the spaces
+            line = line.replace("///", "//");//Why are there three backslashes to a url?
+            /*Parse trigger Data*/
+            QDomDocument doc;
+            doc.setContent(line.toLocal8Bit());
+            qDebug() << in.readAll();
+            QDomNodeList csqs = doc.elementsByTagName("trigger");
+            for (int c = 0; c < csqs.size(); c++) {
+                QDomNode r = csqs.item(c);
+                QDomElement applicationReplace = r.firstChildElement("application");
+                QDomNodeList selfReplace = doc.elementsByTagName("self");
+                for (int x = 0; x < selfReplace.count(); x++) {
+                    qDebug() << "Replaced an application, in a team!";
+                    doc.removeChild(selfReplace.at(x));//should replace self urls
+                }
+                QDomElement resourceRef = applicationReplace.firstChildElement("refURL");
+                qDebug() << "Team App Ref: " << resourceRef.text();
+                for (int i = 0; i < appNames.count(); i++) {
+                    qDebug() << "App Name: " + appNames[i] + " Old Ref: " + appRefLinks[i] + " New: " + newAppRefLinks[i];
+                    if (resourceRef.text().replace("+", "%20") == appRefLinks[i]) {
+                        qDebug() << "Replaced an App: " + resourceRef.text().replace("+", "%20") + " with " + newAppRefLinks[i].toLocal8Bit();
+                        resourceRef.firstChild().setNodeValue(newAppRefLinks[i]);
+                    }
+                }
+                qDebug() << "New Apps Size: " << newAppRefLinks.count();
+                for (int i = 0; i < newAppRefLinks.count(); i++) {
+                    qDebug() << "New App Ref: " << newAppRefLinks[i].toLocal8Bit();
+                }
+            }
+            QString documentString = doc.toString();
+            documentString = documentString.replace(Variables::uccxHostIP, Variables::uccxClientIP);
+            writeToFile(documentString, QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/Triggers/Parsed", triggerNames[i].toLocal8Bit() + ".xml");
+            qDebug() << "Pushing trigger data";
+
+        } else {
+            qDebug() << "Couldn't open trigger to push!";
+        }
+    } //At this point, we now know all teams have been parsed
+    // -- End parse files in Dir
+
+    // lets do triggers
+    for (int i = 0; i < triggerNames.count(); i++) {
+        QFile file(QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/Triggers/Parsed/" + triggerNames[i].toLocal8Bit() + ".xml");
+        if (file.open(QIODevice::ReadOnly | QFile::Text)) {
+            QTextStream in(&file);
+            QString line = in.readAll();
+            line = line.replace("+", "%20");// escape the spaces
+            qDebug() << "Pushing trigger data";
+            QUrl req("https://10.0.0.93/adminapi/trigger");
+            QNetworkRequest request(req);
+            QByteArray postDataSize = QByteArray::number(line.size());
+            request.setRawHeader("Content-Type", "text/xml");
+            request.setRawHeader("Content-Length", postDataSize);
+            request.setRawHeader("Authorization", "Basic " + Variables::uccxHostUsernamePwd.toLocal8Bit());
+            QNetworkAccessManager test;
+            QEventLoop loop;
+            connect(&test, SIGNAL(finished(QNetworkReply*)), &loop, SLOT(quit()));
+            QNetworkReply * reply = test.post(request, line.toLocal8Bit());
+            reply->ignoreSslErrors(); // Ignore only unsigned later on
+            connect(reply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(onError(QNetworkReply::NetworkError)));
+            loop.exec();
+
+            QByteArray response = reply->readAll();
+            QVariant statusCode = reply->attribute( QNetworkRequest::HttpStatusCodeAttribute );
+            //progbar.close();//Why does this close, entire application window?
+            if ( !statusCode.isValid() ) {
+                qDebug() << "Failed to get team data";
+            }
+
+            int status = statusCode.toInt();
+
+            if ( status == 200 || status == 201 || status == 202 ) {
+                qDebug() << "New trigger at: " + response;
+                newTriggerRefLinks.append(QString(response));//this will cause the new ref link to be in the same index
+                writeToFile(line, QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/Triggers/Parsed/Finished", triggerNames[i].toLocal8Bit() + ".xml");
+            } else {
+                QString reason = reply->attribute( QNetworkRequest::HttpReasonPhraseAttribute ).toString();
+            }
+        } else {
+            qDebug() << "Couldn't open trigger to push!";
         }
     }
     // -- End get files in Dir
