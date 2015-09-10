@@ -1028,7 +1028,6 @@ void UCCXTabbedWindow::on_pushButton_3_clicked()
                 newCSQRefLinks.append(QString(response));//this will cause the new ref link to be in the same index
                 writeToFile(line, QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/CSQs/Parsed/Finished", csqNames[i].toLocal8Bit() + ".xml");
             } else {
-                writeToFile(line, QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/CSQs/Parsed/Finished", csqNames[i].toLocal8Bit() + ".xml");
                 QString reason = reply->attribute( QNetworkRequest::HttpReasonPhraseAttribute ).toString();
             }
         } else {
@@ -1057,6 +1056,7 @@ void UCCXTabbedWindow::on_pushButton_3_clicked()
                 qDebug() << "Team CSQ Ref: " << resourceRef.text();
                 for (int i = 0; i < csqNames.count(); i++) {
                     if (resourceRef.text() == csqRefLinks[i]) {
+                        qDebug() << "Replaced a CSQ: " + resourceRef.text() + " with " + newCSQRefLinks[i].toLocal8Bit();
                         resourceRef.firstChild().setNodeValue(newCSQRefLinks[i]);
                     }
                 }
@@ -1071,16 +1071,15 @@ void UCCXTabbedWindow::on_pushButton_3_clicked()
         }
     } //At this point, we now know all teams have been parsed
     // -- End parse files in Dir
-    /*
     // lets do teams
-    for (int i = 0; i < csqNames.count(); i++) {
-        QFile file(QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/CSQs/Parsed/" + csqNames[i].toLocal8Bit() + ".xml");
+    for (int i = 0; i < teamNames.count(); i++) {
+        QFile file(QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/Teams/Parsed/" + teamNames[i].toLocal8Bit() + ".xml");
         if (file.open(QIODevice::ReadOnly | QFile::Text)) {
             QTextStream in(&file);
             QString line = in.readAll();
             line = line.replace("+", "%20");// escape the spaces
-            qDebug() << "Pushing csq data";
-            QUrl req("https://10.0.0.93/adminapi/csq");
+            qDebug() << "Pushing team data";
+            QUrl req("https://10.0.0.93/adminapi/team");
             QNetworkRequest request(req);
             QByteArray postDataSize = QByteArray::number(line.size());
             request.setRawHeader("Content-Type", "text/xml");
@@ -1098,23 +1097,22 @@ void UCCXTabbedWindow::on_pushButton_3_clicked()
             QVariant statusCode = reply->attribute( QNetworkRequest::HttpStatusCodeAttribute );
             //progbar.close();//Why does this close, entire application window?
             if ( !statusCode.isValid() ) {
-                qDebug() << "Failed to get csq data";
+                qDebug() << "Failed to get team data";
             }
 
             int status = statusCode.toInt();
 
             if ( status == 200 || status == 201 || status == 202 ) {
-                qDebug() << "New csq at: " + response;
-                newCSQRefLinks.append(QString(response));//this will cause the new ref link to be in the same index
-                writeToFile(line, QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/CSQs/Parsed/Finished", csqNames[i].toLocal8Bit() + ".xml");
+                qDebug() << "New team at: " + response;
+                newTeamRefLinks.append(QString(response));//this will cause the new ref link to be in the same index
+                writeToFile(line, QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/Teams/Parsed/Finished", teamNames[i].toLocal8Bit() + ".xml");
             } else {
                 QString reason = reply->attribute( QNetworkRequest::HttpReasonPhraseAttribute ).toString();
             }
         } else {
-            qDebug() << "Couldn't open csq to push!";
+            qDebug() << "Couldn't open team to push!";
         }
     }
-    */
     // -- End get files in Dir
 }
 
