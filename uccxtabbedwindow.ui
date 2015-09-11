@@ -26,74 +26,74 @@
      <widget class="QGroupBox" name="horizontalGroupBox_2">
       <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
-        <widget class="QCheckBox" name="checkBox_6">
+        <widget class="QCheckBox" name="checkboxSkills">
          <property name="text">
           <string>Skills</string>
          </property>
          <property name="checked">
-          <bool>true</bool>
+          <bool>false</bool>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QCheckBox" name="checkBox_5">
+        <widget class="QCheckBox" name="checkboxRGs">
          <property name="text">
           <string>Resource Groups</string>
          </property>
          <property name="checked">
-          <bool>true</bool>
+          <bool>false</bool>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QCheckBox" name="checkBox_4">
+        <widget class="QCheckBox" name="checkboxApps">
          <property name="text">
           <string>Applications</string>
          </property>
          <property name="checked">
-          <bool>true</bool>
+          <bool>false</bool>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QCheckBox" name="checkBox_3">
+        <widget class="QCheckBox" name="checkboxCSQs">
          <property name="text">
           <string>CSQs</string>
          </property>
          <property name="checked">
-          <bool>true</bool>
+          <bool>false</bool>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QCheckBox" name="checkBox_2">
+        <widget class="QCheckBox" name="checkboxTeams">
          <property name="text">
           <string>Teams</string>
          </property>
          <property name="checked">
-          <bool>true</bool>
+          <bool>false</bool>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QCheckBox" name="checkBox">
+        <widget class="QCheckBox" name="checkboxTriggers">
          <property name="text">
           <string>Triggers</string>
          </property>
          <property name="checked">
-          <bool>true</bool>
+          <bool>false</bool>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton_3">
+        <widget class="QPushButton" name="btnSelectAll">
          <property name="text">
           <string>Select All</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton_4">
+        <widget class="QPushButton" name="btnUncheckAll">
          <property name="text">
           <string>Deselect All</string>
          </property>
@@ -105,16 +105,22 @@
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
-       <widget class="QPushButton" name="pushButton">
+       <widget class="QPushButton" name="btnGetData">
         <property name="text">
          <string>Retrieve Selected Data Types from Host</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton_2">
+       <widget class="QPushButton" name="btnPushData">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="text">
          <string>Migrate Selected Data Types to Client</string>
+        </property>
+        <property name="checkable">
+         <bool>false</bool>
         </property>
        </widget>
       </item>

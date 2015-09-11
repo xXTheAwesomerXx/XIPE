@@ -57,27 +57,19 @@ void EndusersClusterMngmtTabsWindow::appendToFile(QString text, QString filePath
     QFile logFile(filePath + "/" + fileName);
     QDir logDir;
     if (logDir.exists(filePath)) {
-        qDebug() << "path exists";
         if (logFile.open(QIODevice::Append)) {
-            qDebug() << "file opened!";
             QTextStream in(&logFile);
                    in << text << endl;
                    in << "-------------------------------------------------" << endl;
                    logFile.close();
-        } else {
-            qDebug() << "Failed to open file........";
         }
     } else {
         if (logDir.mkpath(filePath)) {
-            qDebug() << "We made the path";
             if (logFile.open(QIODevice::Append)) {
-                qDebug() << "file opened!";
                 QTextStream in(&logFile);
                     in << text << endl;
                     in << "-------------------------------------------------" << endl;
                        logFile.close();
-            } else {
-                qDebug() << "Failed to open file........";
             }
         }
     }

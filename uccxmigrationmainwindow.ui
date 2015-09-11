@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>348</width>
-    <height>195</height>
+    <width>403</width>
+    <height>221</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -55,6 +55,9 @@
            </widget>
           </item>
           <item>
+           <widget class="QComboBox" name="comboBoxHostVersion"/>
+          </item>
+          <item>
            <widget class="QPushButton" name="pushButtonTestHost">
             <property name="text">
              <string>Test Host Server</string>
@@ -90,6 +93,13 @@
            </widget>
           </item>
           <item>
+           <widget class="QComboBox" name="comboBoxClientVersion">
+            <property name="currentText">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QPushButton" name="pushButtonTestClient">
             <property name="text">
              <string>Test Client Server</string>
@@ -116,7 +126,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>348</width>
+     <width>403</width>
      <height>21</height>
     </rect>
    </property>

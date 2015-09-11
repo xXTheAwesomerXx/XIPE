@@ -13,5 +13,6 @@ namespace Variables
    QVector<QString> usernamePasswordsF;
    QString uccxHostIP, uccxHostUsernamePwd, uccxClientIP, uccxClientUsernamePwd, defaultPrimarySupName, defaultPrimarySupRefURL;
    QString logTime = QString::number(QDateTime::currentMSecsSinceEpoch());
+   bool uccxClientConnected = false, uccxHostConnected = false;
 }
 

@@ -27,22 +27,22 @@ UCCXMigrationMainWindow::UCCXMigrationMainWindow(QWidget *parent) :
     QDir appDir;
     appendToFile("Started UCCX Migration Utility", QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/logs", "log.txt");
     if (appDir.mkpath(QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/Skills")) {
-            qDebug() << "We made the path";
+            qDebug() << "We made the skills path";
     }
     if (appDir.mkpath(QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/Resource\ Groups")) {
-            qDebug() << "We made the path";
+            qDebug() << "We made the rgs path";
     }
     if (appDir.mkpath(QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/Applications")) {
-            qDebug() << "We made the path";
+            qDebug() << "We made the apps path";
     }
     if (appDir.mkpath(QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/CSQs")) {
-            qDebug() << "We made the path";
+            qDebug() << "We made the csqs path";
     }
     if (appDir.mkpath(QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/Teams")) {
-            qDebug() << "We made the path";
+            qDebug() << "We made the teams path";
     }
     if (appDir.mkpath(QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/Triggers")) {
-            qDebug() << "We made the path";
+            qDebug() << "We made the triggers path";
     }
 }
 
@@ -55,27 +55,19 @@ void UCCXMigrationMainWindow::appendToFile(QString text, QString filePath, QStri
     QFile logFile(filePath + "/" + fileName);
     QDir logDir;
     if (logDir.exists(filePath)) {
-        qDebug() << "path exists";
         if (logFile.open(QIODevice::Append)) {
-            qDebug() << "file opened!";
             QTextStream in(&logFile);
                    in << text << endl;
                    in << "-------------------------------------------------" << endl;
                    logFile.close();
-        } else {
-            qDebug() << "Failed to open file........";
         }
     } else {
         if (logDir.mkpath(filePath)) {
-            qDebug() << "We made the path";
             if (logFile.open(QIODevice::Append)) {
-                qDebug() << "file opened!";
                 QTextStream in(&logFile);
                     in << text << endl;
                     in << "-------------------------------------------------" << endl;
-                       logFile.close();
-            } else {
-                qDebug() << "Failed to open file........";
+                    logFile.close();
             }
         }
     }
@@ -97,7 +89,6 @@ bool UCCXMigrationMainWindow::testConnection(QString hostname, QString usernamep
     loop.exec();
 
     QByteArray response = reply->readAll();
-    qDebug() << response;
     QVariant statusCode = reply->attribute( QNetworkRequest::HttpStatusCodeAttribute );
     //progbar.close();//Why does this close, entire application window?
     if ( !statusCode.isValid() ) {
@@ -139,6 +130,7 @@ void UCCXMigrationMainWindow::on_pushButtonTestHost_clicked()
         ui->lineEditHostUsername->setEnabled(false);
         Variables::uccxHostIP = ui->lineEditHostIP->text();
         Variables::uccxHostUsernamePwd = base64_encode(ui->lineEditHostUsername->text() + QString::fromStdString(":") + ui->lineEditHostPassword->text());
+        Variables::uccxHostConnected = true;
     } else {
         ui->pushButtonTestHost->setEnabled(true);
     }
@@ -153,6 +145,7 @@ void UCCXMigrationMainWindow::on_pushButtonTestClient_clicked()
         ui->lineEditClientUsername->setEnabled(false);
         Variables::uccxClientIP = ui->lineEditClientIP->text();
         Variables::uccxClientUsernamePwd = base64_encode(ui->lineEditClientUsername->text() + QString::fromStdString(":") + ui->lineEditClientPassword->text());
+        Variables::uccxClientConnected = true;
     } else {
         ui->pushButtonTestClient->setEnabled(true);
     }
@@ -160,7 +153,11 @@ void UCCXMigrationMainWindow::on_pushButtonTestClient_clicked()
 
 void UCCXMigrationMainWindow::on_pushButtonProceed_clicked()
 {
-    this->hide();
-    UCCXTabbedWindow * tabbedMainWindow = new UCCXTabbedWindow();
-    tabbedMainWindow->show();
+    if (Variables::uccxClientConnected == false || Variables::uccxHostConnected == false) {
+         QMessageBox::critical(this, "UCCXMigrator - Error", "Verify that a host and client server is reachable and try again!");
+    } else {
+        this->hide();
+        UCCXTabbedWindow * tabbedMainWindow = new UCCXTabbedWindow();
+        tabbedMainWindow->show();
+    }
 }

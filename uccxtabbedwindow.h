@@ -18,7 +18,6 @@ public:
     ~UCCXTabbedWindow();
 
 private slots:
-    void on_pushButton_clicked();
     bool getAllTeamData(QString hostname, QString usernamepassword, QString filePath);
     void getDetailedTeamData(QString refURL, QString usernamepassword);
     bool getAllAppData(QString hostname, QString usernamepassword, QString filePath);
@@ -34,8 +33,15 @@ private slots:
     void onfinish(QNetworkReply *rep);
     void onError(QNetworkReply::NetworkError reply);
 
-    void on_pushButton_3_clicked();
+    void on_btnPushData_clicked();
 
+    void on_btnGetData_clicked();
+
+    void on_btnSelectAll_clicked();
+
+    void on_btnUncheckAll_clicked();
+    void writeToLogAndStatus(QString text);
+    void appendToFile(QString text, QString filePath, QString fileName);
 private:
     Ui::UCCXTabbedWindow *ui;
     enum COLUMNS {
