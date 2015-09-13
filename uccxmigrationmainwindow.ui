@@ -55,7 +55,11 @@
            </widget>
           </item>
           <item>
-           <widget class="QComboBox" name="comboBoxHostVersion"/>
+           <widget class="QComboBox" name="comboBoxHostVersion">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+           </widget>
           </item>
           <item>
            <widget class="QPushButton" name="pushButtonTestHost">
@@ -70,6 +74,9 @@
          <layout class="QVBoxLayout" name="verticalLayout_2">
           <item>
            <widget class="QLineEdit" name="lineEditClientIP">
+            <property name="text">
+             <string>10.0.0.93</string>
+            </property>
             <property name="placeholderText">
              <string>Client IP Address</string>
             </property>
@@ -77,6 +84,9 @@
           </item>
           <item>
            <widget class="QLineEdit" name="lineEditClientUsername">
+            <property name="text">
+             <string>appadmin</string>
+            </property>
             <property name="placeholderText">
              <string>Client Username</string>
             </property>
@@ -84,6 +94,9 @@
           </item>
           <item>
            <widget class="QLineEdit" name="lineEditClientPassword">
+            <property name="text">
+             <string>cisco123</string>
+            </property>
             <property name="echoMode">
              <enum>QLineEdit::PasswordEchoOnEdit</enum>
             </property>
@@ -94,6 +107,9 @@
           </item>
           <item>
            <widget class="QComboBox" name="comboBoxClientVersion">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="currentText">
              <string/>
             </property>

@@ -1,6 +1,5 @@
 #include "clustermngmtcustomlist.h"
 #include <QKeyEvent>
-#include <QDebug>
 #include "variables.h"
 #include <QDir>
 #include "endusersclustermngmtmainwindow.h"

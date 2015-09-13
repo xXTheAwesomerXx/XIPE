@@ -15,6 +15,9 @@ namespace Variables
     extern QVector<QString> usernamePasswordsF;
     extern QString uccxHostIP, uccxHostUsernamePwd, uccxClientIP, uccxClientUsernamePwd, defaultPrimarySupName, defaultPrimarySupRefURL;
     extern QString logTime;
-    extern bool uccxClientConnected, uccxHostConnected;
+    extern bool uccxClientConnected, uccxHostConnected, uccxPushCCGs, replacePrimarySupervisor, uccxMappedCCGs;
+    extern QString uccxDefaultPrimarySupervisorName, uccxDefaultPrimarySupervisorLink;
+    extern QStringList uccxDefaultPrimarySupervisorNameList, uccxDefaultPrimarySupervisorLinkList;
+    extern QVector<QString> uccxHostCCGIDs, uccxClientCCGIDs, uccxHostCCGNames, uccxClientCCGNames, uccxHostCCGLinks, uccxClientCCGLinks, uccxHostCCGIDMap, uccxClientCCGIDMap, uccxHostCCGNameMap, uccxClientCCGNameMap, uccxHostCCGLinkMap, uccxClientCCGLinkMap;
 }
 #endif // VARIABLES_H

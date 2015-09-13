@@ -26,6 +26,16 @@
      <widget class="QGroupBox" name="horizontalGroupBox_2">
       <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
+        <widget class="QCheckBox" name="checkboxCCGs">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="text">
+          <string>Call Control Groups</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QCheckBox" name="checkboxSkills">
          <property name="text">
           <string>Skills</string>
@@ -114,7 +124,7 @@
       <item>
        <widget class="QPushButton" name="btnPushData">
         <property name="enabled">
-         <bool>false</bool>
+         <bool>true</bool>
         </property>
         <property name="text">
          <string>Migrate Selected Data Types to Client</string>

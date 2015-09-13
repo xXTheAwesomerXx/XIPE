@@ -1,7 +1,6 @@
 #include "endusersclustermngmtmainwindow.h"
 #include "ui_endusersclustermngmtmainwindow.h"
 #include "endusersclustermngmttabswindow.h"
-#include <QDebug>
 #include <QUrl>
 #include <QtNetwork/QNetworkRequest>
 #include <QtNetwork/QSslCertificate>
@@ -184,7 +183,7 @@ void EndusersClusterMngmtMainWindow::onfinish(QNetworkReply *rep)
 }
 
 void EndusersClusterMngmtMainWindow::onError(QNetworkReply::NetworkError rep) {
-    qDebug() << "We got an error, quit!";
+    appendToFile("Encountered an error while attempting to establish a secure connection! Retrying...", QDir::homePath() + "/XIPE/Cluster\ Mngmt/logs", "log_" + Variables::logTime + ".txt");
 }
 
 QString base64_encode(QString string){
@@ -225,7 +224,7 @@ void EndusersClusterMngmtMainWindow::on_btnAddCluster_clicked()
                             stream << base64_encode(QString("<cluster><name>" + ui->lineEditClustername->text().toLocal8Bit() + "</name><host>" + ui->lineEditHostname->text().toLocal8Bit() + "</host><unpwd>" + base64_encode(ui->lineEditUsername->text() + QString::fromStdString(":") + ui->lineEditPassword->text()).toLocal8Bit() + "</unpwd></cluster>")) << endl;
                             file.close();
                         } else {
-                            qDebug() << "Why couldn't we, write?";
+                            appendToFile("Failed to open configuration file for writing!", QDir::homePath() + "/XIPE/Cluster\ Mngmt/logs", "log_" + Variables::logTime + ".txt");
                         }
 
                         ui->lineEditClustername->setText("");
@@ -399,5 +398,5 @@ void EndusersClusterMngmtMainWindow::on_lineEditPassword_returnPressed()
 
 void EndusersClusterMngmtMainWindow::on_listWidget_customContextMenuRequested(const QPoint &pos)
 {
-    qDebug() << "Right clicked...";
+    //qDebug() << "Right clicked...";
 }

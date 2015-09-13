@@ -30,6 +30,9 @@ private slots:
     void getDetailedCSQData(QString refURL, QString usernamepassword);
     bool getAllTriggerData(QString hostname, QString usernamepassword, QString filePath);
     void getDetailedTriggerData(QString refURL, QString usernamepassword);
+    bool getAllClientResources(QString hostname, QString usernamepassword);
+    bool getAllClientCCGs(QString hostname, QString usernamepassword);
+    bool getAllHostCCGs(QString hostname, QString usernamepassword);
     void onfinish(QNetworkReply *rep);
     void onError(QNetworkReply::NetworkError reply);
 

@@ -1,7 +1,6 @@
 #include "uccxmigrationmainwindow.h"
 #include "ui_uccxmigrationmainwindow.h"
 #include "uccxtabbedwindow.h"
-#include <QDebug>
 #include <QUrl>
 #include <QtNetwork/QNetworkRequest>
 #include <QtNetwork/QSslCertificate>
@@ -27,22 +26,22 @@ UCCXMigrationMainWindow::UCCXMigrationMainWindow(QWidget *parent) :
     QDir appDir;
     appendToFile("Started UCCX Migration Utility", QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/logs", "log.txt");
     if (appDir.mkpath(QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/Skills")) {
-            qDebug() << "We made the skills path";
+            appendToFile("Successfully created Skills directory", QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/logs", "log.txt");
     }
     if (appDir.mkpath(QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/Resource\ Groups")) {
-            qDebug() << "We made the rgs path";
+            appendToFile("Successfully created Resource Groups directory", QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/logs", "log.txt");
     }
     if (appDir.mkpath(QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/Applications")) {
-            qDebug() << "We made the apps path";
+            appendToFile("Successully created Applications directory", QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/logs", "log.txt");
     }
     if (appDir.mkpath(QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/CSQs")) {
-            qDebug() << "We made the csqs path";
+            appendToFile("Successully created CSQs directory", QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/logs", "log.txt");
     }
     if (appDir.mkpath(QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/Teams")) {
-            qDebug() << "We made the teams path";
+            appendToFile("Successully created Teams directory", QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/logs", "log.txt");
     }
     if (appDir.mkpath(QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/Triggers")) {
-            qDebug() << "We made the triggers path";
+            appendToFile("Successully created Triggers directory", QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/logs", "log.txt");
     }
 }
 
@@ -118,7 +117,7 @@ void UCCXMigrationMainWindow::onfinish(QNetworkReply *rep)
 }
 
 void UCCXMigrationMainWindow::onError(QNetworkReply::NetworkError rep) {
-    qDebug() << "We got an error, quit!";
+    appendToFile("Encountered an error while attempting to establish a secure connection! Retrying...", QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/logs", "log.txt");
 }
 
 void UCCXMigrationMainWindow::on_pushButtonTestHost_clicked()

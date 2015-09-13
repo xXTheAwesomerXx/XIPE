@@ -26,7 +26,9 @@ SOURCES += main.cpp\
     uccxmigrationmainwindow.cpp \
     clustermngmtcustomlist.cpp \
     uccxtabbedwindow.cpp \
-    uccxmigrationtab.cpp
+    uccxmigrationtab.cpp \
+    uccxdefaultsdialog.cpp \
+    uccxccgcustomlist.cpp
 
 HEADERS  += mainwindow.h \
     clustertab.h \
@@ -38,7 +40,9 @@ HEADERS  += mainwindow.h \
     uccxmigrationmainwindow.h \
     clustermngmtcustomlist.h \
     uccxtabbedwindow.h \
-    uccxmigrationtab.h
+    uccxmigrationtab.h \
+    uccxdefaultsdialog.h \
+    uccxccgcustomlist.h
 
 FORMS    += mainwindow.ui \
     clustertab.ui \
@@ -48,4 +52,5 @@ FORMS    += mainwindow.ui \
     endusersclustermngmttabswindow.ui \
     uccxmigrationmainwindow.ui \
     uccxtabbedwindow.ui \
-    uccxmigrationtab.ui
+    uccxmigrationtab.ui \
+    uccxdefaultsdialog.ui

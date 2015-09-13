@@ -93,7 +93,7 @@ void EndusersClusterMngmtTabsWindow::onfinish(QNetworkReply *rep)
 }
 
 void EndusersClusterMngmtTabsWindow::onError(QNetworkReply::NetworkError rep) {
-    qDebug() << "We got an error, quit!";
+    appendToFile("Encountered an error while attempting to establish a secure connection! Retrying...", QDir::homePath() + "/XIPE/Cluster\ Mngmt/logs", "log_" + Variables::logTime + ".txt");
 }
 
 void EndusersClusterMngmtTabsWindow::findUsers(QString hostname, QString usernamepassword, int condition1, QString condition2, QString argument, QListWidget * list, QListWidget * list2, int itemIndex) {
@@ -173,7 +173,6 @@ void EndusersClusterMngmtTabsWindow::findUsers(QString hostname, QString usernam
         QString reason = reply->attribute( QNetworkRequest::HttpReasonPhraseAttribute ).toString();
         appendToFile("Failed to connect to " + hostname.toLocal8Bit() + " for find users query!", QDir::homePath() + "/XIPE/Cluster\ Mngmt/logs", "log_" + Variables::logTime + ".txt");
     } else {
-        //qDebug() << response;
         QDomDocument doc;
         doc.setContent(response);
             QDomNodeList rates = doc.elementsByTagName("row");
