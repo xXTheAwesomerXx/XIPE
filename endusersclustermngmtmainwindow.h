@@ -41,6 +41,28 @@ private slots:
 
     void on_listWidget_customContextMenuRequested(const QPoint &pos);
 
+    void on_actionProduct_Registration_triggered();
+
+    void on_actionRemove_Selected_Clusters_triggered();
+
+    void on_actionBack_To_Main_triggered();
+
+    void on_actionExit_triggered();
+
+    void on_actionLog_Interface_triggered();
+
+    void on_actionAbout_Cluster_Management_triggered();
+
+    void on_actionFeedback_triggered();
+
+    void on_actionReport_a_bug_triggered();
+
+    void on_actionTechnical_Support_triggered();
+
+    void on_actionFAQ_triggered();
+
+    void on_actionView_Help_triggered();
+
 private:
     Ui::EndusersClusterMngmtMainWindow *ui;
 };

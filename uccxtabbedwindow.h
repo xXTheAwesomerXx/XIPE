@@ -45,6 +45,10 @@ private slots:
     void on_btnUncheckAll_clicked();
     void writeToLogAndStatus(QString text);
     void appendToFile(QString text, QString filePath, QString fileName);
+    void on_actionBack_to_Host_Client_Configuration_triggered();
+
+    void on_actionExit_triggered();
+
 private:
     Ui::UCCXTabbedWindow *ui;
     enum COLUMNS {

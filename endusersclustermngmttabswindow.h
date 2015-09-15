@@ -34,6 +34,14 @@ private slots:
 
     void on_lineEditQueryData_returnPressed();
     void appendToFile(QString text, QString filePath, QString fileName);
+    void on_actionBack_to_Cluster_List_Interface_triggered();
+
+    void on_actionExit_triggered();
+
+    void on_actionAdd_Selected_Endusers_to_Cluster_triggered();
+
+    void on_actionRemove_Selected_Endusers_from_Cluster_triggered();
+
 private:
     Ui::EndusersClusterMngmtTabsWindow *ui;
 };

@@ -411,3 +411,25 @@ void EndusersClusterMngmtTabsWindow::on_lineEditQueryData_returnPressed()
 {
     on_btnFindUsers_clicked();
 }
+
+void EndusersClusterMngmtTabsWindow::on_actionBack_to_Cluster_List_Interface_triggered()
+{
+    this->destroy(true);
+    EndusersClusterMngmtMainWindow * window = new EndusersClusterMngmtMainWindow();
+    window->show();
+}
+
+void EndusersClusterMngmtTabsWindow::on_actionExit_triggered()
+{
+    this->close();
+}
+
+void EndusersClusterMngmtTabsWindow::on_actionAdd_Selected_Endusers_to_Cluster_triggered()
+{
+    on_btnAddEndusersToCluster_clicked();
+}
+
+void EndusersClusterMngmtTabsWindow::on_actionRemove_Selected_Endusers_from_Cluster_triggered()
+{
+    on_btnRemoveEndusersFromCluster_clicked();
+}

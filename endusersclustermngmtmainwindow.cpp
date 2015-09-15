@@ -16,6 +16,7 @@
 #include <QDomDocument>
 #include <QMessageBox>
 #include "variables.h"
+#include "mainwindow.h"
 using namespace Variables;
 QString base64_encode(QString string);
 QString base64_decode(QString string);
@@ -399,4 +400,93 @@ void EndusersClusterMngmtMainWindow::on_lineEditPassword_returnPressed()
 void EndusersClusterMngmtMainWindow::on_listWidget_customContextMenuRequested(const QPoint &pos)
 {
     //qDebug() << "Right clicked...";
+}
+
+void EndusersClusterMngmtMainWindow::on_actionRemove_Selected_Clusters_triggered()
+{
+    for (int i = ui->listWidget->count(); i --> 0;) {
+        if (ui->listWidget->item(i)->isSelected()) {
+        QFile f(QDir::homePath() + "/XIPE/Cluster\ Mngmt/conn.conf");
+        if(f.open(QIODevice::ReadWrite | QIODevice::Text))
+        {
+            QString s;
+            QTextStream t(&f);
+            while(!t.atEnd())
+            {
+                QString line = t.readLine();
+                if(!line.contains(base64_encode("<cluster><name>" + Variables::clusterNames[i].toLocal8Bit() + "</name><host>" + Variables::hostNames[i].toLocal8Bit() + "</host><unpwd>" + Variables::usernamePasswords[i].toLocal8Bit() + "</unpwd></cluster>"))) {
+                    s.append(line + "\n");
+                } else {
+                    EndusersClusterMngmtMainWindow window;
+                    window.setStatusBarMessage("Removed cluster: " + Variables::clusterNames[i] + " from configuration!");
+                }
+            }
+            f.resize(0);
+            t << s;
+            f.close();
+        }
+        if (ui->listWidget->item(i)->checkState() == Qt::Checked) {
+            Variables::clusterNamesF.removeOne(Variables::clusterNames[i]);
+            Variables::hostNamesF.removeOne(Variables::hostNames[i]);
+            Variables::usernamePasswordsF.removeOne(Variables::usernamePasswords[i]);
+        }
+        Variables::clusterNames.remove(i);
+        Variables::hostNames.remove(i);
+        Variables::usernamePasswords.remove(i);
+        delete ui->listWidget->item(i);
+        }
+    }
+}
+
+void EndusersClusterMngmtMainWindow::on_actionBack_To_Main_triggered()
+{
+    this->destroy(true, true);
+    MainWindow * window = new MainWindow();
+    window->show();
+    this->hide();
+}
+
+void EndusersClusterMngmtMainWindow::on_actionExit_triggered()
+{
+    this->close();
+}
+
+void EndusersClusterMngmtMainWindow::on_actionLog_Interface_triggered()
+{
+
+}
+
+void EndusersClusterMngmtMainWindow::on_actionAbout_Cluster_Management_triggered()
+{
+
+}
+
+void EndusersClusterMngmtMainWindow::on_actionFeedback_triggered()
+{
+
+}
+
+void EndusersClusterMngmtMainWindow::on_actionProduct_Registration_triggered()
+{
+
+}
+
+void EndusersClusterMngmtMainWindow::on_actionReport_a_bug_triggered()
+{
+
+}
+
+void EndusersClusterMngmtMainWindow::on_actionTechnical_Support_triggered()
+{
+
+}
+
+void EndusersClusterMngmtMainWindow::on_actionFAQ_triggered()
+{
+
+}
+
+void EndusersClusterMngmtMainWindow::on_actionView_Help_triggered()
+{
+
 }

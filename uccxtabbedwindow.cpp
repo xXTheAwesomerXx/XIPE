@@ -19,6 +19,7 @@
 #include "variables.h"
 #include <QDirIterator>
 #include "uccxdefaultsdialog.h"
+#include "uccxmigrationmainwindow.h"
 using namespace Variables;
 QVector<QTableWidget*> myTableWidgets;
 QVector<QString> teamRefLinks, appRefLinks, skillRefLinks, rgRefLinks, csqRefLinks, triggerRefLinks;
@@ -1516,4 +1517,16 @@ void UCCXTabbedWindow::on_btnUncheckAll_clicked()
     ui->checkboxSkills->setChecked(false);
     ui->checkboxTeams->setChecked(false);
     ui->checkboxTriggers->setChecked(false);
+}
+
+void UCCXTabbedWindow::on_actionBack_to_Host_Client_Configuration_triggered()
+{
+    this->destroy(true);
+    UCCXMigrationMainWindow * window = new UCCXMigrationMainWindow();
+    window->show();
+}
+
+void UCCXTabbedWindow::on_actionExit_triggered()
+{
+    this->close();
 }

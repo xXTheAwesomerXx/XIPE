@@ -16,6 +16,8 @@
 #include <QDomDocument>
 #include <QMessageBox>
 #include "variables.h"
+#include "mainwindow.h"
+
 QString base64_encode(QString string);
 QString base64_decode(QString string);
 UCCXMigrationMainWindow::UCCXMigrationMainWindow(QWidget *parent) :
@@ -159,4 +161,17 @@ void UCCXMigrationMainWindow::on_pushButtonProceed_clicked()
         UCCXTabbedWindow * tabbedMainWindow = new UCCXTabbedWindow();
         tabbedMainWindow->show();
     }
+}
+
+void UCCXMigrationMainWindow::on_actionBack_to_Main_Window_triggered()
+{
+    this->destroy(true, true);
+    MainWindow * window = new MainWindow();
+    window->show();
+    this->hide();
+}
+
+void UCCXMigrationMainWindow::on_actionExit_triggered()
+{
+    this->close();
 }

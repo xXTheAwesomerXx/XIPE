@@ -30,6 +30,10 @@ private slots:
 
     void on_pushButtonProceed_clicked();
 
+    void on_actionBack_to_Main_Window_triggered();
+
+    void on_actionExit_triggered();
+
 private:
     Ui::UCCXMigrationMainWindow *ui;
 };
