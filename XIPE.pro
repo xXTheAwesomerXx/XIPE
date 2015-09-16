@@ -19,7 +19,6 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     clustertab.cpp \
     variables.cpp \
-    findusersmainwindow.cpp \
     findusersmngmt.cpp \
     endusersclustermngmtmainwindow.cpp \
     endusersclustermngmttabswindow.cpp \
@@ -28,12 +27,12 @@ SOURCES += main.cpp\
     uccxtabbedwindow.cpp \
     uccxmigrationtab.cpp \
     uccxdefaultsdialog.cpp \
-    uccxccgcustomlist.cpp
+    uccxccgcustomlist.cpp \
+    cmuserdevicemanagermainwindow.cpp
 
 HEADERS  += mainwindow.h \
     clustertab.h \
     variables.h \
-    findusersmainwindow.h \
     findusersmngmt.h \
     endusersclustermngmtmainwindow.h \
     endusersclustermngmttabswindow.h \
@@ -42,15 +41,16 @@ HEADERS  += mainwindow.h \
     uccxtabbedwindow.h \
     uccxmigrationtab.h \
     uccxdefaultsdialog.h \
-    uccxccgcustomlist.h
+    uccxccgcustomlist.h \
+    cmuserdevicemanagermainwindow.h
 
 FORMS    += mainwindow.ui \
     clustertab.ui \
-    findusersmainwindow.ui \
     findusersmngmt.ui \
     endusersclustermngmtmainwindow.ui \
     endusersclustermngmttabswindow.ui \
     uccxmigrationmainwindow.ui \
     uccxtabbedwindow.ui \
     uccxmigrationtab.ui \
-    uccxdefaultsdialog.ui
+    uccxdefaultsdialog.ui \
+    cmuserdevicemanagermainwindow.ui

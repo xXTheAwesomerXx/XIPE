@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include "endusersclustermngmtmainwindow.h"
 #include "uccxmigrationmainwindow.h"
+#include "cmuserdevicemanagermainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -34,4 +35,11 @@ void MainWindow::on_btnUCCXMigration_clicked()
 //    UCCXMainWindow uccxWindow;
 //    uccxWindow.setModal(true);
 //    uccxWindow.exec();
+}
+
+void MainWindow::on_btnEnduserDeviceMngr_clicked()
+{
+    CMUserDeviceManagerMainWindow * window = new CMUserDeviceManagerMainWindow();
+    window->show();
+    this->hide();
 }

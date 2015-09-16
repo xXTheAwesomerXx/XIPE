@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>169</width>
-    <height>72</height>
+    <height>101</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,6 +24,13 @@
         </property>
         <property name="text">
          <string>Enduser Cluster Management</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btnEnduserDeviceMngr">
+        <property name="text">
+         <string>CM Enduser/Device Manager</string>
         </property>
        </widget>
       </item>

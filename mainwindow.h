@@ -21,6 +21,8 @@ private slots:
 
     void on_btnUCCXMigration_clicked();
 
+    void on_btnEnduserDeviceMngr_clicked();
+
 private:
     Ui::MainWindow *ui;
 };
