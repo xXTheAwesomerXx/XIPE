@@ -57,6 +57,16 @@
          </widget>
         </item>
         <item>
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>Version:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="comboboxVersion"/>
+        </item>
+        <item>
          <widget class="QCheckBox" name="checkBoxConnect">
           <property name="text">
            <string>Connect</string>

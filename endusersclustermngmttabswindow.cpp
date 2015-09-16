@@ -20,6 +20,7 @@
 #include <QMenuBar>
 #include <QAction>
 #include <QDir>
+#include <QDebug>
 using namespace Variables;
 QVector<QListWidget*> myList;
 QVector<QListWidget*> myList2;
@@ -96,10 +97,9 @@ void EndusersClusterMngmtTabsWindow::onError(QNetworkReply::NetworkError rep) {
     appendToFile("Encountered an error while attempting to establish a secure connection! Retrying...", QDir::homePath() + "/XIPE/Cluster\ Mngmt/logs", "log_" + Variables::logTime + ".txt");
 }
 
-void EndusersClusterMngmtTabsWindow::findUsers(QString hostname, QString usernamepassword, int condition1, QString condition2, QString argument, QListWidget * list, QListWidget * list2, int itemIndex) {
+void EndusersClusterMngmtTabsWindow::findUsers(QString hostname, QString usernamepassword, QString version, int condition1, QString condition2, QString argument, QListWidget * list, QListWidget * list2, int itemIndex) {
     //First maybe we clear the dang list?!
     QString condition1String, condition2String;
-
     if (condition1 == 0) {
         condition1String = "enduser.firstname";
     } else if (condition1 == 1) {
@@ -132,9 +132,9 @@ void EndusersClusterMngmtTabsWindow::findUsers(QString hostname, QString usernam
         condition2String = "= 'f'";
     }
 
-//    ProgressDialog progbar("CMClusters - Connecting...", "Please wait while a connection to the selected clusters are established!");
-//    progbar.show();
-    QByteArray jsonString = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ns=\"http://www.cisco.com/AXL/API/8.5\">";
+    QByteArray jsonString;
+    if (version != "8.x") {
+    jsonString = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ns=\"http://www.cisco.com/AXL/API/8.5\">";
     if (condition1 == 4) {
         jsonString += "<soapenv:Body><ns:executeSQLQuery><sql>SELECT enduser.userid,enduser.firstname,enduser.middlename,enduser.lastname,enduser.islocaluser,enduser.telephonenumber from enduser where "
                 + condition1String + condition2String + "</sql></ns:executeSQLQuery></SOAP-ENV:Envelope>";
@@ -142,13 +142,35 @@ void EndusersClusterMngmtTabsWindow::findUsers(QString hostname, QString usernam
     jsonString += "<soapenv:Body><ns:executeSQLQuery><sql>SELECT enduser.userid,enduser.firstname,enduser.middlename,enduser.lastname,enduser.islocaluser,enduser.telephonenumber from enduser where lower("
             + condition1String + ") " + condition2String + "</sql></ns:executeSQLQuery></SOAP-ENV:Envelope>";
     }
-    QString jsonLogString(getSubstringBetween(jsonString, "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ns=\"http://www.cisco.com/AXL/API/8.5\"><soapenv:Body><ns:executeSQLQuery><sql>", "</sql></ns:executeSQLQuery></SOAP-ENV:Envelope>"));
+    } else {
+        jsonString = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">";
+        if (condition1 == 4) {
+            jsonString += "<SOAP-ENV:Body><axl:executeSQLQuery xmlns:axl=\"http://www.cisco.com/AXL/7.0\" xsi:schemaLocation=\"http://www.cisco.com/AXL/1.0 http://gkar.cisco.com/schema/axlsoap.xsd\" sequence=\"1234\"><sql>SELECT enduser.userid,enduser.firstname,enduser.middlename,enduser.lastname,enduser.islocaluser,enduser.telephonenumber from enduser where "
+                    + condition1String + condition2String + "</sql></axl:executeSQLQuery></SOAP-ENV:Body></SOAP-ENV:Envelope>";
+        } else {
+        jsonString += "<SOAP-ENV:Body><axl:executeSQLQuery xmlns:axl=\"http://www.cisco.com/AXL/7.0\" xsi:schemaLocation=\"http://www.cisco.com/AXL/1.0 http://gkar.cisco.com/schema/axlsoap.xsd\" sequence=\"1234\"><sql>SELECT enduser.userid,enduser.firstname,enduser.middlename,enduser.lastname,enduser.islocaluser,enduser.telephonenumber from enduser where lower("
+                + condition1String + ") " + condition2String + "</sql></axl:executeSQLQuery></SOAP-ENV:Body></SOAP-ENV:Envelope>";
+        }
+    }
+    QString jsonLogString;
+    if (version != "8.x") {
+        jsonLogString = getSubstringBetween(jsonString, "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ns=\"http://www.cisco.com/AXL/API/8.5\"><soapenv:Body><ns:executeSQLQuery><sql>", "</sql></ns:executeSQLQuery></SOAP-ENV:Envelope>");
+    } else {
+        jsonLogString = getSubstringBetween(jsonString, "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"><SOAP-ENV:Body><axl:executeSQLQuery xmlns:axl=\"http://www.cisco.com/AXL/7.0\" xsi:schemaLocation=\"http://www.cisco.com/AXL/1.0 http://gkar.cisco.com/schema/axlsoap.xsd\" sequence=\"1234\"><sql>", "</sql></axl:executeSQLQuery></SOAP-ENV:Body></SOAP-ENV:Envelope>");
+    }
     appendToFile("Execute Query: " + jsonLogString.toLocal8Bit(), QDir::homePath() + "/XIPE/Cluster\ Mngmt/logs", "log_" + Variables::logTime + ".txt");
     QByteArray postDataSize = QByteArray::number(jsonString.size());
     QUrl req("https://" + hostname.toLocal8Bit() + ":8443/axl/");
     QNetworkRequest request(req);
 
-    request.setRawHeader("SOAPAction", "\"CUCM:DB ver=8.5 executeSQLQuery\"");
+    if (version == "8.x") {
+        request.setRawHeader("Host", hostname.toLocal8Bit() + ":8443");
+        request.setRawHeader("Accept", "text/*");
+        request.setRawHeader("SOAPAction", "\"CUCM:DB ver=7.0 executeSQLQuery\"");
+    } else {
+        request.setRawHeader("SOAPAction", "\"CUCM:DB ver=8.5 executeSQLQuery\"");
+
+    }
     request.setRawHeader("Authorization", "Basic " + usernamepassword.toLocal8Bit());
     request.setRawHeader("Content-Type", "text/xml");
     request.setRawHeader("Content-Length", postDataSize);
@@ -213,22 +235,34 @@ void EndusersClusterMngmtTabsWindow::findUsers(QString hostname, QString usernam
     }
 }
 
-void EndusersClusterMngmtTabsWindow::addUsersToCluster(QString hostname, QString usernamepassword, QListWidget *list1, QListWidget *list2, QStatusBar * statusbar) {
-//    ProgressDialog progbar("CMClusters - Connecting...", "Please wait while a connection to the selected clusters are established!");
-//    progbar.show();
+void EndusersClusterMngmtTabsWindow::addUsersToCluster(QString hostname, QString usernamepassword, QString version, QListWidget *list1, QListWidget *list2, QStatusBar * statusbar) {
     int goodAdditions = 0, badAdditions = 0, totalUpdates = list1->selectedItems().count();
     for (int i = list1->count(); i --> 0;) {
         if (list1->item(i)->isSelected()) {
         QString userid = getSubstringBetween(list1->item(i)->text(), QString("("), QString(")"));
         QListWidgetItem* userToRemove = list1->item(i);
         QListWidgetItem* userToAdd = new QListWidgetItem(list1->item(i)->text());
-        QByteArray jsonString = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ns=\"http://www.cisco.com/AXL/API/8.5\">";
-        jsonString += "<soapenv:Body><ns:executeSQLUpdate><sql>UPDATE enduser SET enduser.islocaluser = 't' WHERE enduser.userid = '" + userid.toLocal8Bit() + "'</sql></ns:executeSQLUpdate></SOAP-ENV:Envelope>";
+        QByteArray jsonString;
+        if (version != "8.x") {
+            jsonString = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ns=\"http://www.cisco.com/AXL/API/8.5\">";
+            jsonString += "<soapenv:Body><ns:executeSQLUpdate><sql>UPDATE enduser SET enduser.islocaluser = 't' WHERE enduser.userid = '" + userid.toLocal8Bit() + "'</sql></ns:executeSQLUpdate></SOAP-ENV:Envelope>";
+        } else {
+            jsonString = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">";
+            jsonString += "<SOAP-ENV:Body><axl:executeSQLQuery xmlns:axl=\"http://www.cisco.com/AXL/7.0\" xsi:schemaLocation=\"http://www.cisco.com/AXL/1.0 http://gkar.cisco.com/schema/axlsoap.xsd\" sequence=\"1234\">";
+            jsonString += "<sql>UPDATE enduser SET enduser.islocaluser = 't' WHERE enduser.userid = '" + userid.toLocal8Bit() + "'</sql></axl:executeSQLQuery></SOAP-ENV:Body></SOAP-ENV:Envelope>";
+        }
         QByteArray postDataSize = QByteArray::number(jsonString.size());
         QUrl req("https://" + hostname.toLocal8Bit() + ":8443/axl/");
         QNetworkRequest request(req);
 
-        request.setRawHeader("SOAPAction", "\"CUCM:DB ver=8.5 executeSQLUpdate\"");
+        if (version == "8.x") {
+            request.setRawHeader("Host", hostname.toLocal8Bit() + ":8443");
+            request.setRawHeader("Accept", "text/*");
+            request.setRawHeader("SOAPAction", "\"CUCM:DB ver=7.0 executeSQLQuery\"");
+        } else {
+            request.setRawHeader("SOAPAction", "\"CUCM:DB ver=8.5 executeSQLQuery\"");
+
+        }
         request.setRawHeader("Authorization", "Basic " + usernamepassword.toLocal8Bit());
         request.setRawHeader("Content-Type", "text/xml");
         request.setRawHeader("Content-Length", postDataSize);
@@ -270,7 +304,7 @@ void EndusersClusterMngmtTabsWindow::addUsersToCluster(QString hostname, QString
     }
 }
 
-void EndusersClusterMngmtTabsWindow::removeUsersfromCluster(QString hostname, QString usernamepassword, QListWidget *list1, QListWidget *list2, QStatusBar * statusbar) {
+void EndusersClusterMngmtTabsWindow::removeUsersfromCluster(QString hostname, QString usernamepassword, QString version, QListWidget *list1, QListWidget *list2, QStatusBar * statusbar) {
 //    ProgressDialog progbar("CMClusters - Connecting...", "Please wait while a connection to the selected clusters are established!");
 //    progbar.show();
     int goodAdditions = 0, badAdditions = 0, totalUpdates = list1->selectedItems().count();
@@ -279,13 +313,27 @@ void EndusersClusterMngmtTabsWindow::removeUsersfromCluster(QString hostname, QS
         QString userid = getSubstringBetween(list1->item(i)->text(), QString("("), QString(")"));
         QListWidgetItem* userToRemove = list1->item(i);
         QListWidgetItem* userToAdd = new QListWidgetItem(list1->item(i)->text());
-        QByteArray jsonString = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ns=\"http://www.cisco.com/AXL/API/8.5\">";
+        QByteArray jsonString;
+        if (version != "8.x") {
+        jsonString = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ns=\"http://www.cisco.com/AXL/API/8.5\">";
         jsonString += "<soapenv:Body><ns:executeSQLUpdate><sql>UPDATE enduser SET enduser.islocaluser = 'f' WHERE enduser.userid = '" + userid.toLocal8Bit() + "'</sql></ns:executeSQLUpdate></SOAP-ENV:Envelope>";
+        } else {
+            jsonString = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">";
+            jsonString += "<SOAP-ENV:Body><axl:executeSQLQuery xmlns:axl=\"http://www.cisco.com/AXL/7.0\" xsi:schemaLocation=\"http://www.cisco.com/AXL/1.0 http://gkar.cisco.com/schema/axlsoap.xsd\" sequence=\"1234\">";
+            jsonString += "<sql>UPDATE enduser SET enduser.islocaluser = 'f' WHERE enduser.userid = '" + userid.toLocal8Bit() + "'</sql></axl:executeSQLQuery></SOAP-ENV:Body></SOAP-ENV:Envelope>";
+        }
         QByteArray postDataSize = QByteArray::number(jsonString.size());
         QUrl req("https://" + hostname.toLocal8Bit() + ":8443/axl/");
         QNetworkRequest request(req);
 
-        request.setRawHeader("SOAPAction", "\"CUCM:DB ver=8.5 executeSQLUpdate\"");
+        if (version == "8.x") {
+            request.setRawHeader("Host", hostname.toLocal8Bit() + ":8443");
+            request.setRawHeader("Accept", "text/*");
+            request.setRawHeader("SOAPAction", "\"CUCM:DB ver=7.0 executeSQLQuery\"");
+        } else {
+            request.setRawHeader("SOAPAction", "\"CUCM:DB ver=8.5 executeSQLQuery\"");
+
+        }
         request.setRawHeader("Authorization", "Basic " + usernamepassword.toLocal8Bit());
         request.setRawHeader("Content-Type", "text/xml");
         request.setRawHeader("Content-Length", postDataSize);
@@ -341,7 +389,7 @@ void EndusersClusterMngmtTabsWindow::on_btnFindUsers_clicked()
         QListWidget * list2 = myList2[i];
         list->clear();
         list2->clear();
-        findUsers(Variables::hostNamesF[i], Variables::usernamePasswordsF[i], selectedType, selectedParameter, argumentData, list, list2, i);
+        findUsers(Variables::hostNamesF[i], Variables::usernamePasswordsF[i], Variables::clusterVersionsF[i], selectedType, selectedParameter, argumentData, list, list2, i);
     }
     ui->btnFindUsers->setEnabled(true);
     ui->btnAddEndusersToCluster->setEnabled(true);
@@ -375,7 +423,7 @@ void EndusersClusterMngmtTabsWindow::on_btnAddEndusersToCluster_clicked()
         // XXX: use this to update all lists, after getting their list data from getting the endusers
         QListWidget * list = myList[i];
         QListWidget * list2 = myList2[i];
-        addUsersToCluster(Variables::hostNamesF[i], Variables::usernamePasswordsF[i], list, list2, ui->statusbar);
+        addUsersToCluster(Variables::hostNamesF[i], Variables::usernamePasswordsF[i], Variables::clusterVersionsF[i], list, list2, ui->statusbar);
     }
     ui->btnFindUsers->setEnabled(true);
     ui->btnAddEndusersToCluster->setEnabled(true);
@@ -391,7 +439,7 @@ void EndusersClusterMngmtTabsWindow::on_btnRemoveEndusersFromCluster_clicked()
         // XXX: use this to update all lists, after getting their list data from getting the endusers
         QListWidget * list = myList2[i];
         QListWidget * list2 = myList[i];
-        removeUsersfromCluster(Variables::hostNamesF[i], Variables::usernamePasswordsF[i], list, list2, ui->statusbar);
+        removeUsersfromCluster(Variables::hostNamesF[i], Variables::usernamePasswordsF[i], Variables::clusterVersionsF[i], list, list2, ui->statusbar);
     }
     ui->btnFindUsers->setEnabled(true);
     ui->btnAddEndusersToCluster->setEnabled(true);

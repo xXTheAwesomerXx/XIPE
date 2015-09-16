@@ -8,9 +8,11 @@ namespace Variables
    QVector<QString> clusterNames;
    QVector<QString> hostNames;
    QVector<QString> usernamePasswords;
+   QVector<QString> clusterVersions;
    QVector<QString> clusterNamesF;
    QVector<QString> hostNamesF;
    QVector<QString> usernamePasswordsF;
+   QVector<QString> clusterVersionsF;
    QString uccxHostIP, uccxHostUsernamePwd, uccxClientIP, uccxClientUsernamePwd, defaultPrimarySupName, defaultPrimarySupRefURL;
    QString logTime = QString::number(QDateTime::currentMSecsSinceEpoch());
    bool uccxClientConnected = false, uccxHostConnected = false, uccxPushCCGs = false, replacePrimarySupervisor = false, uccxMappedCCGs = false;

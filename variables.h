@@ -10,9 +10,11 @@ namespace Variables
     extern QVector<QString> clusterNames;
     extern QVector<QString> hostNames;
     extern QVector<QString> usernamePasswords;
+    extern QVector<QString> clusterVersions;
     extern QVector<QString> clusterNamesF;
     extern QVector<QString> hostNamesF;
     extern QVector<QString> usernamePasswordsF;
+    extern QVector<QString> clusterVersionsF;
     extern QString uccxHostIP, uccxHostUsernamePwd, uccxClientIP, uccxClientUsernamePwd, defaultPrimarySupName, defaultPrimarySupRefURL;
     extern QString logTime;
     extern bool uccxClientConnected, uccxHostConnected, uccxPushCCGs, replacePrimarySupervisor, uccxMappedCCGs;

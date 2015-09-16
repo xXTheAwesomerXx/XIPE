@@ -19,7 +19,7 @@ public:
     ~EndusersClusterMngmtMainWindow();
 
 public slots:
-    bool addConnection(QString, QString, QStatusBar * statusbar, QPushButton * button);
+    bool addConnection(QString, QString, QString, QStatusBar * statusbar, QPushButton * button);
     void onfinish(QNetworkReply *rep);
     void onError(QNetworkReply::NetworkError reply);
     void setStatusBarMessage(QString text);

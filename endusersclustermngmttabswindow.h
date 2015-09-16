@@ -20,9 +20,9 @@ private slots:
     QString getSubstringBetween(QString src, QString start, QString stop);
     void onfinish(QNetworkReply *rep);
     void onError(QNetworkReply::NetworkError reply);
-    void findUsers(QString hostname, QString usernamepassword, int condition1, QString condition2, QString argument, QListWidget * list, QListWidget * list2, int listIndex);
-    void addUsersToCluster(QString hostname, QString usernamepassword, QListWidget * list1, QListWidget * list2, QStatusBar * statusbar);
-    void removeUsersfromCluster(QString hostname, QString usernamepassword, QListWidget * list1, QListWidget * list2, QStatusBar * statusbar);
+    void findUsers(QString hostname, QString usernamepassword, QString version, int condition1, QString condition2, QString argument, QListWidget * list, QListWidget * list2, int listIndex);
+    void addUsersToCluster(QString hostname, QString usernamepassword, QString version, QListWidget * list1, QListWidget * list2, QStatusBar * statusbar);
+    void removeUsersfromCluster(QString hostname, QString usernamepassword, QString version, QListWidget * list1, QListWidget * list2, QStatusBar * statusbar);
     void on_btnFindUsers_clicked();
     void on_comboBoxType_activated(int index);
 
