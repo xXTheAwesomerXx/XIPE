@@ -42,6 +42,10 @@ private slots:
 
     void on_actionRemove_Selected_Endusers_from_Cluster_triggered();
 
+    void on_actionLog_Interface_triggered();
+
+    void on_actionLog_Interface_changed();
+
 private:
     Ui::EndusersClusterMngmtTabsWindow *ui;
 };

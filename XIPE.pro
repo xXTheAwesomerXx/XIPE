@@ -28,7 +28,8 @@ SOURCES += main.cpp\
     uccxmigrationtab.cpp \
     uccxdefaultsdialog.cpp \
     uccxccgcustomlist.cpp \
-    cmuserdevicemanagermainwindow.cpp
+    cmuserdevicemanagermainwindow.cpp \
+    loginterfacedialog.cpp
 
 HEADERS  += mainwindow.h \
     clustertab.h \
@@ -42,7 +43,8 @@ HEADERS  += mainwindow.h \
     uccxmigrationtab.h \
     uccxdefaultsdialog.h \
     uccxccgcustomlist.h \
-    cmuserdevicemanagermainwindow.h
+    cmuserdevicemanagermainwindow.h \
+    loginterfacedialog.h
 
 FORMS    += mainwindow.ui \
     clustertab.ui \
@@ -53,4 +55,5 @@ FORMS    += mainwindow.ui \
     uccxtabbedwindow.ui \
     uccxmigrationtab.ui \
     uccxdefaultsdialog.ui \
-    cmuserdevicemanagermainwindow.ui
+    cmuserdevicemanagermainwindow.ui \
+    loginterfacedialog.ui

@@ -17,6 +17,7 @@
 #include <QMessageBox>
 #include "variables.h"
 #include "mainwindow.h"
+#include "QScrollBar"
 
 QString base64_encode(QString string);
 QString base64_decode(QString string);
@@ -25,6 +26,37 @@ UCCXMigrationMainWindow::UCCXMigrationMainWindow(QWidget *parent) :
     ui(new Ui::UCCXMigrationMainWindow)
 {
     ui->setupUi(this);
+    Variables::uccxClientConnected = false;
+    Variables::uccxHostConnected = false;
+    Variables::uccxPushCCGs = false;
+    Variables::replacePrimarySupervisor = false;
+    Variables::uccxMappedCCGs = false;
+    Variables::uccxHostIP.clear();
+    Variables::uccxHostUsernamePwd.clear();
+    Variables::uccxClientIP.clear();
+    Variables::uccxClientUsernamePwd.clear();
+    Variables::defaultPrimarySupName.clear();
+    Variables::defaultPrimarySupRefURL.clear();
+        Variables::uccxDefaultPrimarySupervisorName.clear();
+        Variables::uccxDefaultPrimarySupervisorLink.clear();
+        Variables::uccxDefaultPrimarySupervisorNameList.clear();
+        Variables::uccxDefaultPrimarySupervisorLinkList.clear();
+       Variables::uccxHostCCGIDs.clear();
+       Variables::uccxClientCCGIDs.clear();
+       Variables::uccxHostCCGNames.clear();
+       Variables::uccxClientCCGNames.clear();
+       Variables::uccxHostCCGLinks.clear();
+       Variables::uccxClientCCGLinks.clear();
+       Variables::uccxHostCCGIDMap.clear();
+       Variables::uccxClientCCGIDMap.clear();
+       Variables::uccxHostCCGNameMap.clear();
+       Variables::uccxClientCCGNameMap.clear();
+       Variables::uccxHostCCGLinkMap.clear();
+       Variables::uccxClientCCGLinkMap.clear();
+    if (Variables::logInterfaceShowing == true) {
+        ui->actionLog_Interface->setChecked(true);
+        qDebug() << "Setting log checked to true, because it's showing...";
+    }
     QDir appDir;
     appendToFile("Started UCCX Migration Utility", QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/logs", "log.txt");
     if (appDir.mkpath(QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/Skills")) {
@@ -62,6 +94,11 @@ void UCCXMigrationMainWindow::appendToFile(QString text, QString filePath, QStri
                    in << "-------------------------------------------------" << endl;
                    logFile.close();
         }
+        if (logFile.open(QIODevice::ReadOnly)) {
+            QTextStream in(&logFile);
+            Variables::logInterface->setLogText(in.readAll());
+            Variables::logScrollBar->setValue(2147483647);
+        }
     } else {
         if (logDir.mkpath(filePath)) {
             if (logFile.open(QIODevice::Append)) {
@@ -70,6 +107,11 @@ void UCCXMigrationMainWindow::appendToFile(QString text, QString filePath, QStri
                     in << "-------------------------------------------------" << endl;
                     logFile.close();
             }
+        }
+        if (logFile.open(QIODevice::ReadOnly)) {
+            QTextStream in(&logFile);
+            Variables::logInterface->setLogText(in.readAll());
+            Variables::logScrollBar->setValue(2147483647);
         }
     }
 }
@@ -154,24 +196,39 @@ void UCCXMigrationMainWindow::on_pushButtonTestClient_clicked()
 
 void UCCXMigrationMainWindow::on_pushButtonProceed_clicked()
 {
+    qDebug() << "Proceeding...";
     if (Variables::uccxClientConnected == false || Variables::uccxHostConnected == false) {
-         QMessageBox::critical(this, "UCCXMigrator - Error", "Verify that a host and client server is reachable and try again!");
+        qDebug() << "Both are false?";
+        QMessageBox::critical(this, "UCCXMigrator - Error", "Verify that a host and client server is reachable and try again!");
     } else {
-        this->hide();
+        qDebug() << "We good, proceed.";
         UCCXTabbedWindow * tabbedMainWindow = new UCCXTabbedWindow();
         tabbedMainWindow->show();
+        delete this;
     }
 }
 
 void UCCXMigrationMainWindow::on_actionBack_to_Main_Window_triggered()
 {
-    this->destroy(true, true);
     MainWindow * window = new MainWindow();
     window->show();
-    this->hide();
+    delete this;
 }
 
 void UCCXMigrationMainWindow::on_actionExit_triggered()
 {
     this->close();
+}
+
+void UCCXMigrationMainWindow::on_actionLog_Interface_triggered()
+{
+    if (Variables::logInterfaceShowing == true) {
+        Variables::logInterfaceShowing = false;
+        Variables::logInterface->hide();
+        qDebug() << "Hiding Log";
+    } else {
+        Variables::logInterfaceShowing = true;
+        Variables::logInterface->show();
+        qDebug() << "Showing Log";
+    }
 }

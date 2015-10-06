@@ -34,6 +34,8 @@ private slots:
 
     void on_actionExit_triggered();
 
+    void on_actionLog_Interface_triggered();
+
 private:
     Ui::UCCXMigrationMainWindow *ui;
 };

@@ -6,45 +6,41 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>169</width>
-    <height>101</height>
+    <width>167</width>
+    <height>99</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>XIPE Networks - Cisco Utilities</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QVBoxLayout" name="verticalLayout_2">
+   <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <layout class="QVBoxLayout" name="verticalLayout">
-      <item>
-       <widget class="QPushButton" name="btnEndusersClusterMngmt">
-        <property name="toolTip">
-         <string>Add/Remove Endusers from a Cluster</string>
-        </property>
-        <property name="text">
-         <string>Enduser Cluster Management</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="btnEnduserDeviceMngr">
-        <property name="text">
-         <string>CM Enduser/Device Manager</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="btnUCCXMigration">
-        <property name="statusTip">
-         <string>Pull Data from one UCCX Clusters, and push the data to another UCCX Cluster</string>
-        </property>
-        <property name="text">
-         <string>UCCX Migration Utility</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
+     <widget class="QPushButton" name="btnUCCXMigration">
+      <property name="statusTip">
+       <string>Pull Data from one UCCX Clusters, and push the data to another UCCX Cluster</string>
+      </property>
+      <property name="text">
+       <string>UCCX Migration Utility</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="btnEnduserDeviceMngr">
+      <property name="text">
+       <string>CM Enduser/Device Manager</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="btnEndusersClusterMngmt">
+      <property name="toolTip">
+       <string>Add/Remove Endusers from a Cluster</string>
+      </property>
+      <property name="text">
+       <string>Enduser Cluster Management</string>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>

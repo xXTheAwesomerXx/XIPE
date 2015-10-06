@@ -15,6 +15,7 @@ public:
     explicit UCCXDefaultsDialog(QWidget *parent = 0);
     ~UCCXDefaultsDialog();
     void setPrimarySupervisorIndex(int index);
+    virtual void closeEvent(QCloseEvent * event);
 
 private slots:
     void on_buttonBox_accepted();

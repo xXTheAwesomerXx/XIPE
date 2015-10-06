@@ -20,6 +20,8 @@
 #include <QDirIterator>
 #include "uccxdefaultsdialog.h"
 #include "uccxmigrationmainwindow.h"
+#include "QScrollBar"
+
 using namespace Variables;
 QVector<QTableWidget*> myTableWidgets;
 QVector<QString> teamRefLinks, appRefLinks, skillRefLinks, rgRefLinks, csqRefLinks, triggerRefLinks;
@@ -31,6 +33,30 @@ UCCXTabbedWindow::UCCXTabbedWindow(QWidget *parent) :
     ui(new Ui::UCCXTabbedWindow)
 {
     ui->setupUi(this);
+    myTableWidgets.clear();
+    teamRefLinks.clear();
+    appRefLinks.clear();
+    skillRefLinks.clear();
+    rgRefLinks.clear();
+    csqRefLinks.clear();
+    triggerRefLinks.clear();
+    newTeamRefLinks.clear();
+    newAppRefLinks.clear();
+    newSkillRefLinks.clear();
+    newRGRefLinks.clear();
+    newCSQRefLinks.clear();
+    newTriggerRefLinks;
+    skillNames.clear();
+    rgNames.clear();
+    appNames.clear();
+    csqNames.clear();
+    teamNames.clear();
+    triggerNames.clear();
+    if (Variables::logInterfaceShowing == true) {
+        ui->actionLog_Interface->setChecked(true);
+        qDebug() << "Setting log checked to true, because it's showing...";
+    }
+    qDebug() << "We here, 1";
     //Variables::uccxClientIP = Variables::uccxHostIP;
     //Variables::uccxClientUsernamePwd = Variables::uccxHostUsernamePwd;
     UCCXMigrationTab * skillTab = new UCCXMigrationTab();
@@ -51,7 +77,9 @@ UCCXTabbedWindow::UCCXTabbedWindow(QWidget *parent) :
     UCCXMigrationTab * triggerTab = new UCCXMigrationTab();
     myTableWidgets.append(triggerTab->tableWidget);
     ui->tabWidget->addTab(triggerTab, "Triggers");
+    qDebug() << "We here, 10";
     QStringList skillHeaders, rgHeaders, appHeaders, csqHeaders, teamHeaders, triggerHeaders;
+    qDebug() << "We're here, 15";
     teamHeaders << "Name" << "ID" << "Primary Supervisor" << "Secondary Supervisor" << "Resources" << "CSQs";
     myTableWidgets[4]->setColumnCount(6);
     myTableWidgets[4]->setHorizontalHeaderLabels(teamHeaders);
@@ -61,6 +89,7 @@ UCCXTabbedWindow::UCCXTabbedWindow(QWidget *parent) :
     skillHeaders << "Name" << "ID";
     myTableWidgets[0]->setColumnCount(2);
     myTableWidgets[0]->setHorizontalHeaderLabels(skillHeaders);
+    qDebug() << "We're here, 50";
     rgHeaders << "Name" << "ID";
     myTableWidgets[1]->setColumnCount(2);
     myTableWidgets[1]->setHorizontalHeaderLabels(rgHeaders);
@@ -70,6 +99,7 @@ UCCXTabbedWindow::UCCXTabbedWindow(QWidget *parent) :
     triggerHeaders << "Directory Number" << "HRef";
     myTableWidgets[5]->setColumnCount(2);
     myTableWidgets[5]->setHorizontalHeaderLabels(triggerHeaders);
+    qDebug() << "We're here, 100";
 }
 
 UCCXTabbedWindow::~UCCXTabbedWindow()
@@ -92,6 +122,11 @@ void UCCXTabbedWindow::appendToFile(QString text, QString filePath, QString file
                    in << "-------------------------------------------------" << endl;
                    logFile.close();
         }
+        if (logFile.open(QIODevice::ReadOnly)) {
+            QTextStream in(&logFile);
+            Variables::logInterface->setLogText(in.readAll());
+            Variables::logScrollBar->setValue(2147483647);
+        }
     } else {
         if (logDir.mkpath(filePath)) {
             if (logFile.open(QIODevice::Append)) {
@@ -100,6 +135,11 @@ void UCCXTabbedWindow::appendToFile(QString text, QString filePath, QString file
                     in << "-------------------------------------------------" << endl;
                        logFile.close();
             }
+        }
+        if (logFile.open(QIODevice::ReadOnly)) {
+            QTextStream in(&logFile);
+            Variables::logInterface->setLogText(in.readAll());
+            Variables::logScrollBar->setValue(2147483647);
         }
     }
 }
@@ -1409,7 +1449,7 @@ void UCCXTabbedWindow::on_btnPushData_clicked()
 
 void UCCXTabbedWindow::on_btnGetData_clicked()
 {
-    if (!(ui->checkboxApps->checkState() == Qt::Checked && ui->checkboxCSQs->checkState() == Qt::Checked && ui->checkboxRGs->checkState() == Qt::Checked && ui->checkboxSkills->checkState() == Qt::Checked && ui->checkboxTeams->checkState() == Qt::Checked && ui->checkboxTriggers->checkState() == Qt::Checked)) {
+    if (ui->checkboxApps->checkState() == Qt::Unchecked && ui->checkboxCSQs->checkState() == Qt::Unchecked && ui->checkboxRGs->checkState() == Qt::Unchecked && ui->checkboxSkills->checkState() == Qt::Unchecked && ui->checkboxTeams->checkState() == Qt::Unchecked && ui->checkboxTriggers->checkState() == Qt::Unchecked) {
         ui->statusbar->showMessage("No data types were selected! Please select at least one data type to continue.");
     } else {
         ui->btnGetData->setEnabled(false);
@@ -1521,12 +1561,25 @@ void UCCXTabbedWindow::on_btnUncheckAll_clicked()
 
 void UCCXTabbedWindow::on_actionBack_to_Host_Client_Configuration_triggered()
 {
-    this->destroy(true);
     UCCXMigrationMainWindow * window = new UCCXMigrationMainWindow();
     window->show();
+    delete this;
 }
 
 void UCCXTabbedWindow::on_actionExit_triggered()
 {
     this->close();
+}
+
+void UCCXTabbedWindow::on_actionLog_Interface_triggered()
+{
+    if (Variables::logInterfaceShowing == true) {
+        Variables::logInterfaceShowing = false;
+        Variables::logInterface->hide();
+        qDebug() << "Hiding Log";
+    } else {
+        Variables::logInterfaceShowing = true;
+        Variables::logInterface->show();
+        qDebug() << "Showing Log";
+    }
 }

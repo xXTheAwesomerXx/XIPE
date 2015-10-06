@@ -63,6 +63,8 @@ private slots:
 
     void on_actionView_Help_triggered();
 
+    void on_actionLog_Interface_changed();
+
 private:
     Ui::EndusersClusterMngmtMainWindow *ui;
 };

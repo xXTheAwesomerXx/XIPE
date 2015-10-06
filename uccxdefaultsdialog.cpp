@@ -36,6 +36,36 @@ UCCXDefaultsDialog::~UCCXDefaultsDialog()
     delete ui;
 }
 
+void UCCXDefaultsDialog::closeEvent(QCloseEvent *event) {
+    if (ui->checkBox->checkState() == Qt::Checked) {
+        QString userid = getSubstringBetween(Variables::uccxDefaultPrimarySupervisorNameList[ui->comboboxPrimarySupDefault->currentIndex()], QString(" ["), QString("]"));
+        QString supervisorName = QString(Variables::uccxDefaultPrimarySupervisorNameList[ui->comboboxPrimarySupDefault->currentIndex()]).replace(" [" + userid.toLocal8Bit() + "]", "");
+        Variables::uccxDefaultPrimarySupervisorName = supervisorName;
+        Variables::uccxDefaultPrimarySupervisorLink = Variables::uccxDefaultPrimarySupervisorLinkList[ui->comboboxPrimarySupDefault->currentIndex()];
+        Variables::replacePrimarySupervisor = true;
+    }
+    if (Variables::uccxPushCCGs == false) {
+        if (ui->listWidget->count() <= 0) {
+            QMessageBox::StandardButton reply;
+              reply = QMessageBox::question(this, "XIPE - Confirmation", "You selected not to push Call Control Groups to the Client server, however\nYou did not choose to map any Host CCGs to its respective Client CCG.\n\nIf you continue now, the program will assume that all Call Control Groups\non the Client server matches EXACTLY as the Host Servers Call Control Groups\nWould you still like to proceed?",
+                                            QMessageBox::Yes|QMessageBox::No);
+              if (reply == QMessageBox::Yes) {
+                  Variables::uccxMappedCCGs = false;
+                appendToFile("Enduser chose not to push call control groups, and not to map any host/client call control groups!", QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/logs", "log.txt");
+              } else {
+                Variables::uccxMappedCCGs = false;
+                UCCXDefaultsDialog window;
+                window.setPrimarySupervisorIndex(ui->comboboxPrimarySupDefault->currentIndex());
+                window.setModal(true);
+                window.exec();
+                delete this;
+              }
+        } else {
+            Variables::uccxMappedCCGs = true;
+        }
+    }
+}
+
 QString getSubstringBetween(QString src, QString start, QString stop) {
     std::string sourceStd = src.toStdString();
     std::string startStd = start.toStdString();
@@ -69,6 +99,7 @@ void UCCXDefaultsDialog::on_buttonBox_accepted()
                 window.setPrimarySupervisorIndex(ui->comboboxPrimarySupDefault->currentIndex());
                 window.setModal(true);
                 window.exec();
+                delete this;
               }
         } else {
             Variables::uccxMappedCCGs = true;

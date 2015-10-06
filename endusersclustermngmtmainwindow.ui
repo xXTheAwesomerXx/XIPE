@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>CM Enduser Home Cluster Utility - Cluster Selection</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -182,6 +182,9 @@
    </property>
   </action>
   <action name="actionLog_Interface">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Log Interface</string>
    </property>

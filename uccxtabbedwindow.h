@@ -49,6 +49,8 @@ private slots:
 
     void on_actionExit_triggered();
 
+    void on_actionLog_Interface_triggered();
+
 private:
     Ui::UCCXTabbedWindow *ui;
     enum COLUMNS {

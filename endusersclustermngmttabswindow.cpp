@@ -21,6 +21,8 @@
 #include <QAction>
 #include <QDir>
 #include <QDebug>
+#include "QScrollBar"
+
 using namespace Variables;
 QVector<QListWidget*> myList;
 QVector<QListWidget*> myList2;
@@ -30,6 +32,13 @@ EndusersClusterMngmtTabsWindow::EndusersClusterMngmtTabsWindow(QWidget *parent) 
     ui(new Ui::EndusersClusterMngmtTabsWindow)
 {
     ui->setupUi(this);
+    myList.clear();
+    myList2.clear();
+    messageString.clear();
+    if (Variables::logInterfaceShowing == true) {
+        ui->actionLog_Interface->setChecked(true);
+        qDebug() << "Setting log checked to true, because it's showing...";
+    }
     for (int i = 0; i < Variables::clusterNamesF.count(); i++) {
         ClusterTab * tab = new ClusterTab();
         tab->listWidget->setStyleSheet("QListView::item:selected:active { background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(58, 58, 58, 255), stop:1 rgba(90, 90, 90, 255)) } QListView::item:hover { background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #FAFBFE, stop: 1 #DCDEF1); }");
@@ -64,6 +73,11 @@ void EndusersClusterMngmtTabsWindow::appendToFile(QString text, QString filePath
                    in << "-------------------------------------------------" << endl;
                    logFile.close();
         }
+        if (logFile.open(QIODevice::ReadOnly)) {
+            QTextStream in(&logFile);
+            Variables::logInterface->setLogText(in.readAll());
+            Variables::logScrollBar->setValue(2147483647);
+        }
     } else {
         if (logDir.mkpath(filePath)) {
             if (logFile.open(QIODevice::Append)) {
@@ -72,6 +86,11 @@ void EndusersClusterMngmtTabsWindow::appendToFile(QString text, QString filePath
                     in << "-------------------------------------------------" << endl;
                        logFile.close();
             }
+        }
+        if (logFile.open(QIODevice::ReadOnly)) {
+            QTextStream in(&logFile);
+            Variables::logInterface->setLogText(in.readAll());
+            Variables::logScrollBar->setValue(2147483647);
         }
     }
 }
@@ -457,14 +476,14 @@ void EndusersClusterMngmtTabsWindow::on_tabWidgetClusters_currentChanged(int ind
 
 void EndusersClusterMngmtTabsWindow::on_lineEditQueryData_returnPressed()
 {
-    on_btnFindUsers_clicked();
+    EndusersClusterMngmtTabsWindow::on_btnFindUsers_clicked();
 }
 
 void EndusersClusterMngmtTabsWindow::on_actionBack_to_Cluster_List_Interface_triggered()
 {
-    this->destroy(true);
     EndusersClusterMngmtMainWindow * window = new EndusersClusterMngmtMainWindow();
     window->show();
+    delete this;
 }
 
 void EndusersClusterMngmtTabsWindow::on_actionExit_triggered()
@@ -480,4 +499,22 @@ void EndusersClusterMngmtTabsWindow::on_actionAdd_Selected_Endusers_to_Cluster_t
 void EndusersClusterMngmtTabsWindow::on_actionRemove_Selected_Endusers_from_Cluster_triggered()
 {
     on_btnRemoveEndusersFromCluster_clicked();
+}
+
+void EndusersClusterMngmtTabsWindow::on_actionLog_Interface_triggered()
+{
+    if (Variables::logInterfaceShowing == true) {
+        Variables::logInterfaceShowing = false;
+        Variables::logInterface->hide();
+        qDebug() << "Hiding Log";
+    } else {
+        Variables::logInterfaceShowing = true;
+        Variables::logInterface->show();
+        qDebug() << "Showing Log";
+    }
+}
+
+void EndusersClusterMngmtTabsWindow::on_actionLog_Interface_changed()
+{
+
 }

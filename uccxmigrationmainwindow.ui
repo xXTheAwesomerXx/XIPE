@@ -191,6 +191,9 @@
    </property>
   </action>
   <action name="actionLog_Interface">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Log Interface</string>
    </property>

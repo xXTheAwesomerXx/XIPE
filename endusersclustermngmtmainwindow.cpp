@@ -18,6 +18,8 @@
 #include "variables.h"
 #include "mainwindow.h"
 #include <QDebug>
+#include "QScrollBar"
+
 using namespace Variables;
 QString base64_encode(QString string);
 QString base64_decode(QString string);
@@ -27,6 +29,18 @@ EndusersClusterMngmtMainWindow::EndusersClusterMngmtMainWindow(QWidget *parent) 
     ui(new Ui::EndusersClusterMngmtMainWindow)
 {
     ui->setupUi(this);
+    Variables::clusterNames.clear();
+    Variables::clusterNamesF.clear();
+    Variables::clusterVersions.clear();
+    Variables::clusterVersionsF.clear();
+    Variables::hostNames.clear();
+    Variables::hostNamesF.clear();
+    Variables::usernamePasswords.clear();
+    Variables::usernamePasswordsF.clear();
+    if (Variables::logInterfaceShowing == true) {
+        ui->actionLog_Interface->setChecked(true);
+        qDebug() << "Setting log checked to true, because it's showing...";
+    }
     QStringList uccxVersions;
     uccxVersions << "8.x" << "9.x" << "10.x" << "11.x";
     ui->comboboxVersion->addItems(uccxVersions);
@@ -87,6 +101,11 @@ void appendToFile(QString text, QString filePath, QString fileName) {
                    in << "-------------------------------------------------" << endl;
                    logFile.close();
         }
+        if (logFile.open(QIODevice::ReadOnly)) {
+            QTextStream in(&logFile);
+            Variables::logInterface->setLogText(in.readAll());
+            Variables::logScrollBar->setValue(2147483647);
+        }
     } else {
         if (logDir.mkpath(filePath)) {
             if (logFile.open(QIODevice::Append)) {
@@ -95,6 +114,11 @@ void appendToFile(QString text, QString filePath, QString fileName) {
                     in << "-------------------------------------------------" << endl;
                        logFile.close();
             }
+        }
+        if (logFile.open(QIODevice::ReadOnly)) {
+            QTextStream in(&logFile);
+            Variables::logInterface->setLogText(in.readAll());
+            Variables::logScrollBar->setValue(2147483647);
         }
     }
 }
@@ -117,9 +141,9 @@ void EndusersClusterMngmtMainWindow::on_pushButtonProceedToMngmt_clicked()
         }
     }
     if (numOfConns > 0) {
-        this->hide();
         EndusersClusterMngmtTabsWindow * tabbedWindow = new EndusersClusterMngmtTabsWindow();
         tabbedWindow->show();
+        delete this;
     } else {
         QMessageBox::critical(this, "CMClusters - Error", "No clusters were selected! Please select at least one cluster and try again. \n\n Before being able to select a cluster, you must first test the connection!");
     }
@@ -469,10 +493,9 @@ void EndusersClusterMngmtMainWindow::on_actionRemove_Selected_Clusters_triggered
 
 void EndusersClusterMngmtMainWindow::on_actionBack_To_Main_triggered()
 {
-    this->destroy(true, true);
     MainWindow * window = new MainWindow();
     window->show();
-    this->hide();
+    delete this;
 }
 
 void EndusersClusterMngmtMainWindow::on_actionExit_triggered()
@@ -482,7 +505,15 @@ void EndusersClusterMngmtMainWindow::on_actionExit_triggered()
 
 void EndusersClusterMngmtMainWindow::on_actionLog_Interface_triggered()
 {
-
+    if (Variables::logInterfaceShowing == true) {
+        Variables::logInterfaceShowing = false;
+        Variables::logInterface->hide();
+        qDebug() << "Hiding Log";
+    } else {
+        Variables::logInterfaceShowing = true;
+        Variables::logInterface->show();
+        qDebug() << "Showing Log";
+    }
 }
 
 void EndusersClusterMngmtMainWindow::on_actionAbout_Cluster_Management_triggered()
@@ -516,6 +547,11 @@ void EndusersClusterMngmtMainWindow::on_actionFAQ_triggered()
 }
 
 void EndusersClusterMngmtMainWindow::on_actionView_Help_triggered()
+{
+
+}
+
+void EndusersClusterMngmtMainWindow::on_actionLog_Interface_changed()
 {
 
 }

@@ -3,6 +3,9 @@
 #include "endusersclustermngmtmainwindow.h"
 #include "uccxmigrationmainwindow.h"
 #include "cmuserdevicemanagermainwindow.h"
+#include "variables.h" //Include this here so variables are initialized
+#include "loginterfacedialog.h"
+#include "loginterfacedialog.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -10,6 +13,18 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     this->setStyleSheet("QPushButton {background: #3498db;border-style: outset;border-width: 2px;border-radius: 10px;font-family: Arial;color: #ffffff;font-size: 20px;padding: 10px 20px 10px 20px;text-decoration: none;}");
+    LogInterfaceDialog * logInterface;
+    if (Variables::logInterfaceDone == false) {
+        logInterface = new LogInterfaceDialog();
+        Variables::logInterface = logInterface;
+        Variables::logInterfaceDone = true;
+    }
+    if (Variables::logInterfaceShowing == true) {
+        if (Variables::logInterface->isHidden()) {
+            Variables::logInterface->show();
+            Variables::logInterfaceShowing = true;
+        }
+    }
 }
 
 MainWindow::~MainWindow()

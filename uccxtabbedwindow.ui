@@ -124,7 +124,7 @@
       <item>
        <widget class="QPushButton" name="btnPushData">
         <property name="enabled">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
         <property name="text">
          <string>Migrate Selected Data Types to Client</string>
@@ -192,6 +192,9 @@
    </property>
   </action>
   <action name="actionLog_Interface">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Log Interface</string>
    </property>
