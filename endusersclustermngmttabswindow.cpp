@@ -69,7 +69,7 @@ void EndusersClusterMngmtTabsWindow::appendToFile(QString text, QString filePath
     if (logDir.exists(filePath)) {
         if (logFile.open(QIODevice::Append)) {
             QTextStream in(&logFile);
-                   in << text << endl;
+                   in << "[" << QDateTime::fromMSecsSinceEpoch(QDateTime::currentMSecsSinceEpoch()).toString().replace(":", "-") << "] " << text << endl;
                    in << "-------------------------------------------------" << endl;
                    logFile.close();
         }
@@ -82,7 +82,7 @@ void EndusersClusterMngmtTabsWindow::appendToFile(QString text, QString filePath
         if (logDir.mkpath(filePath)) {
             if (logFile.open(QIODevice::Append)) {
                 QTextStream in(&logFile);
-                    in << text << endl;
+                    in << "[" << QDateTime::fromMSecsSinceEpoch(QDateTime::currentMSecsSinceEpoch()).toString().replace(":", "-") << "] " << text << endl;
                     in << "-------------------------------------------------" << endl;
                        logFile.close();
             }

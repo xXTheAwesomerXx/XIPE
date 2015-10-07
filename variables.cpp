@@ -16,7 +16,7 @@ namespace Variables
    QVector<QString> clusterVersionsF;
    QScrollBar * logScrollBar;
    QString uccxHostIP, uccxHostUsernamePwd, uccxClientIP, uccxClientUsernamePwd, defaultPrimarySupName, defaultPrimarySupRefURL;
-   QString logTime = QString::number(QDateTime::currentMSecsSinceEpoch());
+   QString logTime = QDateTime::fromMSecsSinceEpoch(QDateTime::currentMSecsSinceEpoch()).toString().replace(":", "-");
    bool logInterfaceShowing = false, logInterfaceDone = false, uccxClientConnected = false, uccxHostConnected = false, uccxPushCCGs = false, replacePrimarySupervisor = false, uccxMappedCCGs = false;
    QString uccxDefaultPrimarySupervisorName, uccxDefaultPrimarySupervisorLink;
    QStringList uccxDefaultPrimarySupervisorNameList, uccxDefaultPrimarySupervisorLinkList;

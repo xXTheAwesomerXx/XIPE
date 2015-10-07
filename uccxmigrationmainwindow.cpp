@@ -90,7 +90,7 @@ void UCCXMigrationMainWindow::appendToFile(QString text, QString filePath, QStri
     if (logDir.exists(filePath)) {
         if (logFile.open(QIODevice::Append)) {
             QTextStream in(&logFile);
-                   in << text << endl;
+                   in << "[" << QDateTime::fromMSecsSinceEpoch(QDateTime::currentMSecsSinceEpoch()).toString().replace(":", "-") << "] " << text << endl;
                    in << "-------------------------------------------------" << endl;
                    logFile.close();
         }
@@ -103,7 +103,7 @@ void UCCXMigrationMainWindow::appendToFile(QString text, QString filePath, QStri
         if (logDir.mkpath(filePath)) {
             if (logFile.open(QIODevice::Append)) {
                 QTextStream in(&logFile);
-                    in << text << endl;
+                    in << "[" << QDateTime::fromMSecsSinceEpoch(QDateTime::currentMSecsSinceEpoch()).toString().replace(":", "-") << "] " << text << endl;
                     in << "-------------------------------------------------" << endl;
                     logFile.close();
             }
@@ -118,6 +118,7 @@ void UCCXMigrationMainWindow::appendToFile(QString text, QString filePath, QStri
 
 bool UCCXMigrationMainWindow::testConnection(QString hostname, QString usernamepassword, QStatusBar * statusbar) {
     statusbar->showMessage("Connecting to " + hostname.toLocal8Bit() + " please wait!");
+    appendToFile("Connecting to " + hostname.toLocal8Bit() + " please wait!", QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/logs", "log.txt");
     QUrl req("https://" + hostname.toLocal8Bit() + "/adminapi/team");
     QNetworkRequest request(req);
 
@@ -136,6 +137,7 @@ bool UCCXMigrationMainWindow::testConnection(QString hostname, QString usernamep
     //progbar.close();//Why does this close, entire application window?
     if ( !statusCode.isValid() ) {
         statusbar->showMessage("Connection to " + hostname.toLocal8Bit() + " failed! Status Code: " + statusCode.toByteArray());
+        appendToFile("Connection to " + hostname.toLocal8Bit() + " failed! Status Code: " + statusCode.toByteArray(), QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/logs", "log.txt");
         return false;
     }
 
@@ -144,9 +146,11 @@ bool UCCXMigrationMainWindow::testConnection(QString hostname, QString usernamep
     if ( status != 200 ) {
         QString reason = reply->attribute( QNetworkRequest::HttpReasonPhraseAttribute ).toString();
         statusbar->showMessage("Connection to " + hostname.toLocal8Bit() + " failed! Status Code: " + statusCode.toByteArray());
+        appendToFile("Connection to " + hostname.toLocal8Bit() + " failed! Status Code: " + statusCode.toByteArray(), QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/logs", "log.txt");
         return false;
     } else {
         statusbar->showMessage("Successfully connected to " + hostname.toLocal8Bit() + "!");
+        appendToFile("Successfully connected to " + hostname.toLocal8Bit() + "!", QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/logs", "log.txt");
         return true;
     }
     return false;

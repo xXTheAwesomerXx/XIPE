@@ -97,7 +97,7 @@ void appendToFile(QString text, QString filePath, QString fileName) {
     if (logDir.exists(filePath)) {
         if (logFile.open(QIODevice::Append)) {
             QTextStream in(&logFile);
-                   in << text << endl;
+                   in << "[" << QDateTime::fromMSecsSinceEpoch(QDateTime::currentMSecsSinceEpoch()).toString().replace(":", "-") << "] " << text << endl;
                    in << "-------------------------------------------------" << endl;
                    logFile.close();
         }
@@ -110,7 +110,7 @@ void appendToFile(QString text, QString filePath, QString fileName) {
         if (logDir.mkpath(filePath)) {
             if (logFile.open(QIODevice::Append)) {
                 QTextStream in(&logFile);
-                    in << text << endl;
+                    in << "[" << QDateTime::fromMSecsSinceEpoch(QDateTime::currentMSecsSinceEpoch()).toString().replace(":", "-") << "] " << text << endl;
                     in << "-------------------------------------------------" << endl;
                        logFile.close();
             }
