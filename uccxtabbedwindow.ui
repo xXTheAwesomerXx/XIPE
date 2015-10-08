@@ -151,8 +151,9 @@
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionBack_to_Host_Client_Configuration"/>
+    <addaction name="actionExport_to_Spreadsheet"/>
     <addaction name="separator"/>
+    <addaction name="actionBack_to_Host_Client_Configuration"/>
     <addaction name="actionExit"/>
    </widget>
    <widget class="QMenu" name="menuView">
@@ -232,6 +233,11 @@
   <action name="actionView_Help">
    <property name="text">
     <string>View Help</string>
+   </property>
+  </action>
+  <action name="actionExport_to_Spreadsheet">
+   <property name="text">
+    <string>Export to Spreadsheet</string>
    </property>
   </action>
  </widget>

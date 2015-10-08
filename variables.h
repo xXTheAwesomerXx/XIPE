@@ -9,6 +9,7 @@ namespace Variables
 {
     extern LogInterfaceDialog * logInterface;
     extern QVector<QListWidget*> list; //QList of Pointers
+
     extern QVector<QString> clusterNames;
     extern QVector<QString> hostNames;
     extern QVector<QString> usernamePasswords;
@@ -18,6 +19,7 @@ namespace Variables
     extern QVector<QString> usernamePasswordsF;
     extern QVector<QString> clusterVersionsF;
     extern QScrollBar * logScrollBar;
+
     extern QString uccxHostIP, uccxHostUsernamePwd, uccxClientIP, uccxClientUsernamePwd, defaultPrimarySupName, defaultPrimarySupRefURL;
     extern QString logTime;
     extern bool logInterfaceShowing, logInterfaceDone, uccxClientConnected, uccxHostConnected, uccxPushCCGs, replacePrimarySupervisor, uccxMappedCCGs;

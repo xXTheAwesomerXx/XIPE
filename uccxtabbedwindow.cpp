@@ -1583,3 +1583,26 @@ void UCCXTabbedWindow::on_actionLog_Interface_triggered()
         qDebug() << "Showing Log";
     }
 }
+
+void UCCXTabbedWindow::on_actionExport_to_Spreadsheet_triggered()
+{
+    /*
+    QFile f( QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/logs" + "log.txt" );
+
+    if (f.open(QFile::WriteOnly | QFile::Truncate))
+    {
+        QTextStream data( &f );
+        QStringList strList;
+
+        for( int r = 0; r < ui->tableWidget->rowCount(); ++r )
+        {
+            strList.clear();
+            for( int c = 0; c < ui->tableWidget->columnCount(); ++c )
+            {
+                strList << "\" "+ui->tableWidget->item( r, c )->text()+"\" ";
+            }
+            data << strList.join( ";" )+"\n";
+        }
+        f.close();
+    }*/
+}

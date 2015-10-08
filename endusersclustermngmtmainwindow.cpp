@@ -67,7 +67,7 @@ EndusersClusterMngmtMainWindow::EndusersClusterMngmtMainWindow(QWidget *parent) 
                               Variables::hostNames.append(hostname.text());
                               Variables::usernamePasswords.append(unpassword.text());
                               Variables::clusterVersions.append(version.text());
-                              QListWidgetItem *cluster = new QListWidgetItem(clustername.text());
+                              QListWidgetItem *cluster = new QListWidgetItem(clustername.text() + " (" + hostname.text() + ") | " + version.text());
                               cluster->setFlags(cluster->flags() | Qt::ItemIsUserCheckable = false);
                               cluster->setFlags(cluster->flags() | Qt::ItemIsSelectable);
                               cluster->setCheckState(Qt::Unchecked);
@@ -248,13 +248,13 @@ void EndusersClusterMngmtMainWindow::on_btnAddCluster_clicked()
 {
     if ((!ui->lineEditHostname->text().isEmpty()) && (!ui->lineEditUsername->text().isEmpty()) && (!ui->lineEditPassword->text().isEmpty())) {
         if (!ui->lineEditClustername->text().isEmpty()) {
-            QList<QListWidgetItem *> items = ui->listWidget->findItems(ui->lineEditClustername->text(), Qt::MatchExactly);
+            QList<QListWidgetItem *> items = ui->listWidget->findItems(ui->lineEditClustername->text() + " (" + ui->lineEditHostname->text() + ") | " + ui->comboboxVersion->currentText(), Qt::MatchExactly);
             if (items.size() > 0) {
                 QMessageBox::critical(this, "CMClusters - Error", "A cluster was already found with that name! *You can leave the cluster name field blank and the added cluster will have a name of the clusters Hostname/IP by default.");
             } else {
                 if (ui->checkBoxConnect->isChecked()) {
                     if (addConnection(ui->lineEditHostname->text(), base64_encode(ui->lineEditUsername->text() + QString::fromStdString(":") + ui->lineEditPassword->text()), ui->comboboxVersion->currentText(), ui->statusbar, ui->btnAddCluster)) {
-                        QListWidgetItem* cluster = new QListWidgetItem(ui->lineEditClustername->text(), ui->listWidget);
+                        QListWidgetItem* cluster = new QListWidgetItem(ui->lineEditClustername->text() + " (" + ui->lineEditHostname->text() + ") | " + ui->comboboxVersion->currentText(), ui->listWidget);
                         cluster->setFlags(cluster->flags() | Qt::ItemIsUserCheckable = false); //Let's make it so
                         cluster->setFlags(cluster->flags() | Qt::ItemIsSelectable);
                         cluster->setCheckState(Qt::Checked);
@@ -280,7 +280,7 @@ void EndusersClusterMngmtMainWindow::on_btnAddCluster_clicked()
                         ui->comboboxVersion->setCurrentIndex(0);
                     } else {
                         // Maybe popup here? because we weren't able to connect
-                        QListWidgetItem* cluster = new QListWidgetItem(ui->lineEditClustername->text(), ui->listWidget);
+                        QListWidgetItem* cluster = new QListWidgetItem(ui->lineEditClustername->text() + " (" + ui->lineEditHostname->text() + ") | " + ui->comboboxVersion->currentText(), ui->listWidget);
                         cluster->setFlags(cluster->flags() | Qt::ItemIsUserCheckable = false); //Let's make it so
                         cluster->setFlags(cluster->flags() | Qt::ItemIsSelectable);
                         cluster->setSelected(true);
@@ -306,7 +306,7 @@ void EndusersClusterMngmtMainWindow::on_btnAddCluster_clicked()
                     }
                 } else {
                     // Just add the item
-                    QListWidgetItem* cluster = new QListWidgetItem(ui->lineEditClustername->text(), ui->listWidget);
+                    QListWidgetItem* cluster = new QListWidgetItem(ui->lineEditClustername->text() + " (" + ui->lineEditHostname->text() + ") | " + ui->comboboxVersion->currentText(), ui->listWidget);
                     cluster->setFlags(cluster->flags() | Qt::ItemIsUserCheckable = false); //Let's make it so
                     cluster->setFlags(cluster->flags() | Qt::ItemIsSelectable);
                     cluster->setSelected(true);
@@ -332,13 +332,13 @@ void EndusersClusterMngmtMainWindow::on_btnAddCluster_clicked()
                 }
             }
         } else {
-            QList<QListWidgetItem *> items = ui->listWidget->findItems(ui->lineEditHostname->text(), Qt::MatchExactly);
+            QList<QListWidgetItem *> items = ui->listWidget->findItems(ui->lineEditHostname->text() + " (" + ui->lineEditHostname->text() + ") | " + ui->comboboxVersion->currentText(), Qt::MatchExactly);
             if (items.size() > 0) {
                 QMessageBox::critical(this, "CMClusters - Error", "A cluster was already found with that name! *You can leave the cluster name field blank and the added cluster will have a name of the clusters Hostname/IP by default.");
             } else {
                 if (ui->checkBoxConnect->isChecked()) {
                     if (addConnection(ui->lineEditHostname->text(), base64_encode(ui->lineEditUsername->text() + QString::fromStdString(":") + ui->lineEditPassword->text()), ui->comboboxVersion->currentText(), ui->statusbar, ui->btnAddCluster)) {
-                        QListWidgetItem* cluster = new QListWidgetItem(ui->lineEditHostname->text(), ui->listWidget);
+                        QListWidgetItem* cluster = new QListWidgetItem(ui->lineEditHostname->text() + " (" + ui->lineEditHostname->text() + ") | " + ui->comboboxVersion->currentText(), ui->listWidget);
                         cluster->setFlags(cluster->flags() | Qt::ItemIsUserCheckable = false); //Let's make it so
                         cluster->setFlags(cluster->flags() | Qt::ItemIsSelectable);
                         cluster->setCheckState(Qt::Checked);
@@ -362,7 +362,7 @@ void EndusersClusterMngmtMainWindow::on_btnAddCluster_clicked()
                         ui->comboboxVersion->setCurrentIndex(0);
                     } else {
                         // Maybe popup here? because we weren't able to connect
-                        QListWidgetItem* cluster = new QListWidgetItem(ui->lineEditHostname->text(), ui->listWidget);
+                        QListWidgetItem* cluster = new QListWidgetItem(ui->lineEditHostname->text() + " (" + ui->lineEditHostname->text() + ") | " + ui->comboboxVersion->currentText(), ui->listWidget);
                         cluster->setFlags(cluster->flags() | Qt::ItemIsUserCheckable = false); //Let's make it so
                         cluster->setFlags(cluster->flags() | Qt::ItemIsSelectable);
                         cluster->setSelected(true);
@@ -388,7 +388,7 @@ void EndusersClusterMngmtMainWindow::on_btnAddCluster_clicked()
                     }
                 } else {
                     // Just add the item
-                    QListWidgetItem* cluster = new QListWidgetItem(ui->lineEditHostname->text(), ui->listWidget);
+                    QListWidgetItem* cluster = new QListWidgetItem(ui->lineEditHostname->text() + " (" + ui->lineEditHostname->text() + ") | " + ui->comboboxVersion->currentText(), ui->listWidget);
                     cluster->setFlags(cluster->flags() | Qt::ItemIsUserCheckable = false); //Let's make it so
                     cluster->setFlags(cluster->flags() | Qt::ItemIsSelectable);
                     cluster->setSelected(true);
@@ -450,7 +450,7 @@ void EndusersClusterMngmtMainWindow::on_lineEditPassword_returnPressed()
 
 void EndusersClusterMngmtMainWindow::on_listWidget_customContextMenuRequested(const QPoint &pos)
 {
-    //qDebug() << "Right clicked...";
+    qDebug() << "Right clicked...";
 }
 
 void EndusersClusterMngmtMainWindow::on_actionRemove_Selected_Clusters_triggered()
@@ -468,8 +468,7 @@ void EndusersClusterMngmtMainWindow::on_actionRemove_Selected_Clusters_triggered
                 if(!line.contains(base64_encode("<cluster><name>" + Variables::clusterNames[i].toLocal8Bit() + "</name><host>" + Variables::hostNames[i].toLocal8Bit() + "</host><unpwd>" + Variables::usernamePasswords[i].toLocal8Bit() + "</unpwd><version>" + Variables::clusterVersions[i].toLocal8Bit() + "</version></cluster>"))) {
                     s.append(line + "\n");
                 } else {
-                    EndusersClusterMngmtMainWindow window;
-                    window.setStatusBarMessage("Removed cluster: " + Variables::clusterNames[i] + " from configuration!");
+                    ui->statusbar->showMessage("Removed cluster: " + Variables::clusterNames[i] + " from configuration!");
                 }
             }
             f.resize(0);

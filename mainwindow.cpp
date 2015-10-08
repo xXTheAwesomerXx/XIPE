@@ -6,6 +6,7 @@
 #include "variables.h" //Include this here so variables are initialized
 #include "loginterfacedialog.h"
 #include "loginterfacedialog.h"
+#include "cmuserdevicemanager.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),

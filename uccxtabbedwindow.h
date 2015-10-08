@@ -51,6 +51,8 @@ private slots:
 
     void on_actionLog_Interface_triggered();
 
+    void on_actionExport_to_Spreadsheet_triggered();
+
 private:
     Ui::UCCXTabbedWindow *ui;
     enum COLUMNS {
