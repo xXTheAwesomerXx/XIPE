@@ -10,8 +10,6 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = XIPE
 TEMPLATE = app
-LIBS += -LC:/OpenSSL-Win32/lib -lubsec
-INCLUDEPATH += C:/OpenSSL-Win32/include
 QT += network
 QT += xml
 
