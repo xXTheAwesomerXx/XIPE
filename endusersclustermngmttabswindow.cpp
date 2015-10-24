@@ -481,7 +481,7 @@ void EndusersClusterMngmtTabsWindow::on_actionBack_to_Cluster_List_Interface_tri
 {
     EndusersClusterMngmtMainWindow * window = new EndusersClusterMngmtMainWindow();
     window->show();
-    delete this;
+    this->close();
 }
 
 void EndusersClusterMngmtTabsWindow::on_actionExit_triggered()

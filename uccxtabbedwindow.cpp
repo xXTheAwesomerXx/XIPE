@@ -1557,7 +1557,7 @@ void UCCXTabbedWindow::on_actionBack_to_Host_Client_Configuration_triggered()
 {
     UCCXMigrationMainWindow * window = new UCCXMigrationMainWindow();
     window->show();
-    delete this;
+    this->close();
 }
 
 void UCCXTabbedWindow::on_actionExit_triggered()

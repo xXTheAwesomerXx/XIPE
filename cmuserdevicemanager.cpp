@@ -23,7 +23,7 @@ void CMUserDeviceManager::on_actionBack_to_Cluster_List_triggered()
 {
     CMUserDeviceManagerMainWindow * backwindow = new CMUserDeviceManagerMainWindow();
     backwindow->show();
-    delete this;
+    this->close();
 }
 
 void CMUserDeviceManager::on_actionExit_triggered()

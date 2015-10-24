@@ -141,7 +141,7 @@ void EndusersClusterMngmtMainWindow::on_pushButtonProceedToMngmt_clicked()
     if (numOfConns > 0) {
         EndusersClusterMngmtTabsWindow * tabbedWindow = new EndusersClusterMngmtTabsWindow();
         tabbedWindow->show();
-        delete this;
+        this->close();
     } else {
         QMessageBox::critical(this, "CMClusters - Error", "No clusters were selected! Please select at least one cluster and try again. \n\n Before being able to select a cluster, you must first test the connection!");
     }
@@ -492,7 +492,7 @@ void EndusersClusterMngmtMainWindow::on_actionBack_To_Main_triggered()
 {
     MainWindow * window = new MainWindow();
     window->show();
-    delete this;
+    this->close();
 }
 
 void EndusersClusterMngmtMainWindow::on_actionExit_triggered()

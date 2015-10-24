@@ -204,7 +204,7 @@ void UCCXMigrationMainWindow::on_pushButtonProceed_clicked()
     } else {
         UCCXTabbedWindow * tabbedMainWindow = new UCCXTabbedWindow();
         tabbedMainWindow->show();
-        delete this;
+        this->close();
     }
 }
 
@@ -212,7 +212,7 @@ void UCCXMigrationMainWindow::on_actionBack_to_Main_Window_triggered()
 {
     MainWindow * window = new MainWindow();
     window->show();
-    delete this;
+    this->close();
 }
 
 void UCCXMigrationMainWindow::on_actionExit_triggered()
