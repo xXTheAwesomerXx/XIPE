@@ -55,7 +55,6 @@ UCCXMigrationMainWindow::UCCXMigrationMainWindow(QWidget *parent) :
        Variables::uccxClientCCGLinkMap.clear();
     if (Variables::logInterfaceShowing == true) {
         ui->actionLog_Interface->setChecked(true);
-        qDebug() << "Setting log checked to true, because it's showing...";
     }
     QDir appDir;
     appendToFile("Started UCCX Migration Utility", QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/logs", "log.txt");
@@ -200,12 +199,9 @@ void UCCXMigrationMainWindow::on_pushButtonTestClient_clicked()
 
 void UCCXMigrationMainWindow::on_pushButtonProceed_clicked()
 {
-    qDebug() << "Proceeding...";
     if (Variables::uccxClientConnected == false || Variables::uccxHostConnected == false) {
-        qDebug() << "Both are false?";
         QMessageBox::critical(this, "UCCXMigrator - Error", "Verify that a host and client server is reachable and try again!");
     } else {
-        qDebug() << "We good, proceed.";
         UCCXTabbedWindow * tabbedMainWindow = new UCCXTabbedWindow();
         tabbedMainWindow->show();
         delete this;
@@ -229,10 +225,8 @@ void UCCXMigrationMainWindow::on_actionLog_Interface_triggered()
     if (Variables::logInterfaceShowing == true) {
         Variables::logInterfaceShowing = false;
         Variables::logInterface->hide();
-        qDebug() << "Hiding Log";
     } else {
         Variables::logInterfaceShowing = true;
         Variables::logInterface->show();
-        qDebug() << "Showing Log";
     }
 }

@@ -54,9 +54,7 @@ UCCXTabbedWindow::UCCXTabbedWindow(QWidget *parent) :
     triggerNames.clear();
     if (Variables::logInterfaceShowing == true) {
         ui->actionLog_Interface->setChecked(true);
-        qDebug() << "Setting log checked to true, because it's showing...";
     }
-    qDebug() << "We here, 1";
     //Variables::uccxClientIP = Variables::uccxHostIP;
     //Variables::uccxClientUsernamePwd = Variables::uccxHostUsernamePwd;
     UCCXMigrationTab * skillTab = new UCCXMigrationTab();
@@ -77,9 +75,7 @@ UCCXTabbedWindow::UCCXTabbedWindow(QWidget *parent) :
     UCCXMigrationTab * triggerTab = new UCCXMigrationTab();
     myTableWidgets.append(triggerTab->tableWidget);
     ui->tabWidget->addTab(triggerTab, "Triggers");
-    qDebug() << "We here, 10";
     QStringList skillHeaders, rgHeaders, appHeaders, csqHeaders, teamHeaders, triggerHeaders;
-    qDebug() << "We're here, 15";
     teamHeaders << "Name" << "ID" << "Primary Supervisor" << "Secondary Supervisor" << "Resources" << "CSQs";
     myTableWidgets[4]->setColumnCount(6);
     myTableWidgets[4]->setHorizontalHeaderLabels(teamHeaders);
@@ -89,7 +85,6 @@ UCCXTabbedWindow::UCCXTabbedWindow(QWidget *parent) :
     skillHeaders << "Name" << "ID";
     myTableWidgets[0]->setColumnCount(2);
     myTableWidgets[0]->setHorizontalHeaderLabels(skillHeaders);
-    qDebug() << "We're here, 50";
     rgHeaders << "Name" << "ID";
     myTableWidgets[1]->setColumnCount(2);
     myTableWidgets[1]->setHorizontalHeaderLabels(rgHeaders);
@@ -99,7 +94,6 @@ UCCXTabbedWindow::UCCXTabbedWindow(QWidget *parent) :
     triggerHeaders << "Directory Number" << "HRef";
     myTableWidgets[5]->setColumnCount(2);
     myTableWidgets[5]->setHorizontalHeaderLabels(triggerHeaders);
-    qDebug() << "We're here, 100";
 }
 
 UCCXTabbedWindow::~UCCXTabbedWindow()
@@ -1576,11 +1570,9 @@ void UCCXTabbedWindow::on_actionLog_Interface_triggered()
     if (Variables::logInterfaceShowing == true) {
         Variables::logInterfaceShowing = false;
         Variables::logInterface->hide();
-        qDebug() << "Hiding Log";
     } else {
         Variables::logInterfaceShowing = true;
         Variables::logInterface->show();
-        qDebug() << "Showing Log";
     }
 }
 

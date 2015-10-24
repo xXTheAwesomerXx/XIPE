@@ -1,7 +1,6 @@
 #include "loginterfacedialog.h"
 #include "ui_loginterfacedialog.h"
 #include "variables.h"
-#include "qdebug.h"
 #include "QScrollBar"
 
 LogInterfaceDialog::LogInterfaceDialog(QWidget *parent) :
@@ -28,7 +27,6 @@ void LogInterfaceDialog::setLogText(QString text) {
 
 void LogInterfaceDialog::on_textBrowser_textChanged()
 {
-    qDebug() << "Text changed...do something?!";
     QScrollBar * sb = Variables::logScrollBar;
     sb->setValue(sb->maximum());
 }

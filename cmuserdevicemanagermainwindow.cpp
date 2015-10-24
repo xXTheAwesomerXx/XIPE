@@ -38,10 +38,9 @@ CMUserDeviceManagerMainWindow::CMUserDeviceManagerMainWindow(QWidget *parent) :
     Variables::usernamePasswordsF.clear();
     if (Variables::logInterfaceShowing == true) {
         ui->actionLog_Interface->setChecked(true);
-        qDebug() << "Setting log checked to true, because it's showing...";
     }
     QStringList uccxVersions;
-    uccxVersions << "8.x" << "9.x" << "10.x" << "11.x";
+    uccxVersions << "9.x" << "10.x" << "11.x";
     ui->comboboxVersion->addItems(uccxVersions);
     ui->listWidgetConnections->setSelectionMode(QAbstractItemView::SingleSelection);
     QFile inputFile(QDir::homePath() + "/XIPE/Cluster\ Mngmt/conn.conf");
@@ -99,11 +98,9 @@ void CMUserDeviceManagerMainWindow::on_actionLog_Interface_triggered()
     if (Variables::logInterfaceShowing == true) {
         Variables::logInterfaceShowing = false;
         Variables::logInterface->hide();
-        qDebug() << "Hiding Log";
     } else {
         Variables::logInterfaceShowing = true;
         Variables::logInterface->show();
-        qDebug() << "Showing Log";
     }
 }
 

@@ -11,7 +11,6 @@ CMUserDeviceManager::CMUserDeviceManager(QWidget *parent) :
     ui->setupUi(this);
     if (Variables::logInterfaceShowing == true) {
         ui->actionLog_Interface->setChecked(true);
-        qDebug() << "Setting log checked to true, because it's showing...";
     }
 }
 
@@ -37,10 +36,8 @@ void CMUserDeviceManager::on_actionLog_Interface_triggered()
     if (Variables::logInterfaceShowing == true) {
         Variables::logInterfaceShowing = false;
         Variables::logInterface->hide();
-        qDebug() << "Hiding Log";
     } else {
         Variables::logInterfaceShowing = true;
         Variables::logInterface->show();
-        qDebug() << "Showing Log";
     }
 }

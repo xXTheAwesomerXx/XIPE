@@ -1,7 +1,6 @@
 #include "uccxccgcustomlist.h"
 #include "variables.h"
 #include <QKeyEvent>
-#include <QDebug>
 
 using namespace Variables;
 UCCXCCGCustomList::UCCXCCGCustomList()

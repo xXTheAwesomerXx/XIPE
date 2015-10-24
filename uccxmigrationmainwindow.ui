@@ -24,7 +24,7 @@
           <item>
            <widget class="QLineEdit" name="lineEditHostIP">
             <property name="text">
-             <string>10.0.0.93</string>
+             <string/>
             </property>
             <property name="placeholderText">
              <string>Host IP Address</string>
@@ -34,7 +34,7 @@
           <item>
            <widget class="QLineEdit" name="lineEditHostUsername">
             <property name="text">
-             <string>appadmin</string>
+             <string/>
             </property>
             <property name="placeholderText">
              <string>Host Username</string>
@@ -44,7 +44,7 @@
           <item>
            <widget class="QLineEdit" name="lineEditHostPassword">
             <property name="text">
-             <string>cisco123</string>
+             <string/>
             </property>
             <property name="echoMode">
              <enum>QLineEdit::PasswordEchoOnEdit</enum>
@@ -75,7 +75,7 @@
           <item>
            <widget class="QLineEdit" name="lineEditClientIP">
             <property name="text">
-             <string>10.0.0.93</string>
+             <string/>
             </property>
             <property name="placeholderText">
              <string>Client IP Address</string>
@@ -85,7 +85,7 @@
           <item>
            <widget class="QLineEdit" name="lineEditClientUsername">
             <property name="text">
-             <string>appadmin</string>
+             <string/>
             </property>
             <property name="placeholderText">
              <string>Client Username</string>
@@ -95,7 +95,7 @@
           <item>
            <widget class="QLineEdit" name="lineEditClientPassword">
             <property name="text">
-             <string>cisco123</string>
+             <string/>
             </property>
             <property name="echoMode">
              <enum>QLineEdit::PasswordEchoOnEdit</enum>

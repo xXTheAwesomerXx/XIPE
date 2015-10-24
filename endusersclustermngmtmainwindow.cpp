@@ -17,7 +17,6 @@
 #include <QMessageBox>
 #include "variables.h"
 #include "mainwindow.h"
-#include <QDebug>
 #include "QScrollBar"
 
 using namespace Variables;
@@ -39,10 +38,9 @@ EndusersClusterMngmtMainWindow::EndusersClusterMngmtMainWindow(QWidget *parent) 
     Variables::usernamePasswordsF.clear();
     if (Variables::logInterfaceShowing == true) {
         ui->actionLog_Interface->setChecked(true);
-        qDebug() << "Setting log checked to true, because it's showing...";
     }
     QStringList uccxVersions;
-    uccxVersions << "8.x" << "9.x" << "10.x" << "11.x";
+    uccxVersions << "9.x" << "10.x" << "11.x";
     ui->comboboxVersion->addItems(uccxVersions);
     ui->listWidget->setSelectionMode(QAbstractItemView::MultiSelection);
     QFile inputFile(QDir::homePath() + "/XIPE/Cluster\ Mngmt/conn.conf");
@@ -450,7 +448,7 @@ void EndusersClusterMngmtMainWindow::on_lineEditPassword_returnPressed()
 
 void EndusersClusterMngmtMainWindow::on_listWidget_customContextMenuRequested(const QPoint &pos)
 {
-    qDebug() << "Right clicked...";
+
 }
 
 void EndusersClusterMngmtMainWindow::on_actionRemove_Selected_Clusters_triggered()
@@ -507,11 +505,9 @@ void EndusersClusterMngmtMainWindow::on_actionLog_Interface_triggered()
     if (Variables::logInterfaceShowing == true) {
         Variables::logInterfaceShowing = false;
         Variables::logInterface->hide();
-        qDebug() << "Hiding Log";
     } else {
         Variables::logInterfaceShowing = true;
         Variables::logInterface->show();
-        qDebug() << "Showing Log";
     }
 }
 

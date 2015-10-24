@@ -20,7 +20,6 @@
 #include <QMenuBar>
 #include <QAction>
 #include <QDir>
-#include <QDebug>
 #include "QScrollBar"
 
 using namespace Variables;
@@ -37,7 +36,6 @@ EndusersClusterMngmtTabsWindow::EndusersClusterMngmtTabsWindow(QWidget *parent) 
     messageString.clear();
     if (Variables::logInterfaceShowing == true) {
         ui->actionLog_Interface->setChecked(true);
-        qDebug() << "Setting log checked to true, because it's showing...";
     }
     for (int i = 0; i < Variables::clusterNamesF.count(); i++) {
         ClusterTab * tab = new ClusterTab();
@@ -506,11 +504,9 @@ void EndusersClusterMngmtTabsWindow::on_actionLog_Interface_triggered()
     if (Variables::logInterfaceShowing == true) {
         Variables::logInterfaceShowing = false;
         Variables::logInterface->hide();
-        qDebug() << "Hiding Log";
     } else {
         Variables::logInterfaceShowing = true;
         Variables::logInterface->show();
-        qDebug() << "Showing Log";
     }
 }
 
