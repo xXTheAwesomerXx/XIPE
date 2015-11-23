@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>XIPE Networks - Cisco Utilities</string>
   </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>favicon.ico</normaloff>favicon.ico</iconset>
+  </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>

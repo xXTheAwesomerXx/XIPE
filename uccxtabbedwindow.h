@@ -18,6 +18,8 @@ public:
     ~UCCXTabbedWindow();
 
 private slots:
+    bool getAllScriptUrls(QString hostname, QString usernamepassword, QString filePath);
+    void getDetailedScriptData(QString refURL, QString usernamepassword);
     bool getAllTeamData(QString hostname, QString usernamepassword, QString filePath);
     void getDetailedTeamData(QString refURL, QString usernamepassword);
     bool getAllAppData(QString hostname, QString usernamepassword, QString filePath);
@@ -35,7 +37,7 @@ private slots:
     bool getAllHostCCGs(QString hostname, QString usernamepassword);
     void onfinish(QNetworkReply *rep);
     void onError(QNetworkReply::NetworkError reply);
-
+    //void finishedDownloadingZip(QNetworkReply *reply);
     void on_btnPushData_clicked();
 
     void on_btnGetData_clicked();

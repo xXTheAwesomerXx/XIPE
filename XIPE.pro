@@ -12,6 +12,7 @@ TARGET = XIPE
 TEMPLATE = app
 QT += network
 QT += xml
+RC_FILE = xipe.rc
 
 SOURCES += main.cpp\
         mainwindow.cpp \
@@ -54,4 +55,7 @@ FORMS    += mainwindow.ui \
     uccxdefaultsdialog.ui \
     cmuserdevicemanagermainwindow.ui \
     loginterfacedialog.ui \
-    cmuserdevicemanager.ui
+    cmuserdevicemanager.ui \
+    rtreportinginterface.ui
+
+RESOURCES +=

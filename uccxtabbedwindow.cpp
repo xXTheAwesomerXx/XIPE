@@ -21,6 +21,7 @@
 #include "uccxdefaultsdialog.h"
 #include "uccxmigrationmainwindow.h"
 #include "QScrollBar"
+#include "QDebug"
 
 using namespace Variables;
 QVector<QTableWidget*> myTableWidgets;
@@ -761,6 +762,42 @@ void UCCXTabbedWindow::getDetailedTriggerData(QString refURL, QString usernamepa
     } else {
         QString reason = reply->attribute( QNetworkRequest::HttpReasonPhraseAttribute ).toString();
         writeToLogAndStatus("Failed to obtain Trigger data from " + refURL);
+    }
+}
+
+bool UCCXTabbedWindow::getAllScriptUrls(QString hostname, QString usernamepassword, QString filePath) {
+
+}
+
+void UCCXTabbedWindow::getDetailedScriptData(QString refURL, QString usernamepassword) {
+    QUrl req(refURL);
+    QNetworkRequest request(req);
+    request.setRawHeader("Content-Type", "application/zip");
+    //request.setRawHeader("Authorization", "Basic " + usernamepassword.toLocal8Bit());
+    QNetworkAccessManager test;
+    QEventLoop loop;
+    connect(&test, SIGNAL(finished(QNetworkReply*)), &loop, SLOT(quit()));
+    QNetworkReply * reply = test.get(request);
+    reply->ignoreSslErrors(); // Ignore only unsigned later on
+    connect(reply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(onError(QNetworkReply::NetworkError)));
+    loop.exec();
+
+    QByteArray response = reply->readAll();
+    QVariant statusCode = reply->attribute( QNetworkRequest::HttpStatusCodeAttribute );
+    //progbar.close();//Why does this close, entire application window?
+    if ( !statusCode.isValid() ) {
+        writeToLogAndStatus("Server returned an invalid status code while attempting to obtain Trigger Data...");
+    }
+
+    int status = statusCode.toInt();
+
+    if ( status == 200 || status == 201 || status == 202 ) {
+        qDebug() << "We got 200+";
+        qDebug() << response;
+        writeToFile(response, QDir::homePath() + "/XIPE/UCCX\ Migration/" + Variables::logTime + "/Applications", "test.zip");
+    } else {
+        QString reason = reply->attribute( QNetworkRequest::HttpReasonPhraseAttribute ).toString();
+        writeToLogAndStatus("Failed to obtain zip file data from " + refURL);
     }
 }
 
@@ -1526,6 +1563,8 @@ void UCCXTabbedWindow::on_btnGetData_clicked()
         }
         ui->btnPushData->setEnabled(true);
         ui->statusbar->showMessage("Finished obtaining all selected data types! Ready to begin migration!");
+        qDebug() << "Attempting to download file as zip";
+        getDetailedScriptData("https://10.0.0.93/appadmin/Script?request_type=pgd.play&filename=Training&currentDir=%2fdefault%2f&fileType=folder", Variables::uccxHostUsernamePwd);
         UCCXDefaultsDialog dialog;
         dialog.setModal(true);
         dialog.exec();
